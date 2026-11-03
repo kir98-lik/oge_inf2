@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ОГЭ-Квест — тренажёр по информатике</title>
+<style>
+    .button-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #4f6ef7;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    margin: 10px;
+}
+.button-link:hover {
+    background: #3d5be0;
+}
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;
+    min-height:100vh; overflow-x:hidden;
+    background:var(--bg); color:var(--text);
+    transition:background .5s ease;
+    --bg:#0b1020; --panel:#151c33; --panel2:#1c2444;
+    --text:#e8ecf8; --muted:#8b96b8;
+    --accent:#6c8cff; --accent2:#a06bff;
+    --good:#2dd4a7; --bad:#ff5c6c; --gold:#ffc94d;
+    --border:rgba(255,255,255,.1);
+  }
+  body[data-theme="jungle"]{ --bg:#07130f; --panel:#0f201a; --panel2:#16302a; --accent:#2dd4a7; --accent2:#7ee787; }
+  body[data-theme="cyber"]{ --bg:#0a0714; --panel:#170f26; --panel2:#221536; --accent:#ff4dd2; --accent2:#4df0ff; }
+  body[data-theme="ocean"]{ --bg:#051524; --panel:#0a2238; --panel2:#0e2d47; --accent:#22b8cf; --accent2:#7be3ff; }
+  body[data-theme="volcano"]{ --bg:#1a0805; --panel:#2b0e06; --panel2:#3d150a; --accent:#ff7a3d; --accent2:#ffc94d; }
+
+  body::before{
+    content:''; position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background:
+      radial-gradient(circle at 15% 15%, rgba(108,140,255,.16), transparent 45%),
+      radial-gradient(circle at 85% 85%, rgba(160,107,255,.16), transparent 45%);
+    transition:background .5s ease;
+  }
+  body[data-theme="jungle"]::before{
+    background:
+      radial-gradient(circle at 15% 15%, rgba(45,212,167,.16), transparent 45%),
+      radial-gradient(circle at 85% 85%, rgba(126,231,135,.14), transparent 45%);
+  }
+  body[data-theme="cyber"]::before{
+    background:
+      radial-gradient(circle at 15% 15%, rgba(255,77,210,.16), transparent 45%),
+      radial-gradient(circle at 85% 85%, rgba(77,240,255,.14), transparent 45%);
+  }
+  body[data-theme="ocean"]::before{
+    background:
+      radial-gradient(circle at 15% 15%, rgba(34,184,207,.18), transparent 45%),
+      radial-gradient(circle at 85% 85%, rgba(123,227,255,.14), transparent 45%);
+  }
+  body[data-theme="volcano"]::before{
+    background:
+      radial-gradient(circle at 15% 15%, rgba(255,122,61,.18), transparent 45%),
+      radial-gradient(circle at 85% 85%, rgba(255,201,77,.14), transparent 45%);
+  }
+
+  .topbar{display:flex; align-items:center; justify-content:space-between; padding:18px 22px; max-width:880px; margin:0 auto;}
+  .brand{font-size:19px; font-weight:800; letter-spacing:-.3px}
+  .variant-badge{
+    font-size:13px; font-weight:700; padding:7px 16px; border-radius:999px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff;
+    box-shadow:0 6px 18px rgba(0,0,0,.35);
+  }
+
+  main{max-width:880px; margin:0 auto; padding:0 18px 70px}
+
+  .screen{display:none; animation:fadeIn .35s ease}
+  .screen.active{display:block}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:none}}
+
+  .hero-title{font-size:30px; line-height:1.2; margin:18px 0 8px; letter-spacing:-.6px}
+  .hero-sub{color:var(--muted); margin:0 0 28px; font-size:15px}
+
+  .theme-grid{display:grid; gap:12px; grid-template-columns:1fr}
+  @media(min-width:520px){ .theme-grid{grid-template-columns:repeat(auto-fit, minmax(145px, 1fr))} }
+
+  .theme-card{
+    background:var(--panel); border:2px solid var(--border);
+    border-radius:16px; padding:18px 12px; cursor:pointer;
+    color:var(--text); font-family:inherit; text-align:left;
+    transition:.2s; position:relative; overflow:hidden;
+  }
+  .theme-card:hover{transform:translateY(-4px); border-color:var(--accent); box-shadow:0 14px 32px rgba(0,0,0,.4)}
+  .theme-card::after{
+    content:''; position:absolute; inset:0; opacity:0; transition:.2s;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+  }
+  .theme-card:hover::after{opacity:.08}
+  .tc-emoji{font-size:26px; margin-bottom:8px; display:block}
+  .tc-title{font-size:14px; font-weight:800; margin-bottom:2px}
+  .tc-desc{font-size:11px; color:var(--muted)}
+
+  .hud{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:8px;
+    background:var(--panel); border:1px solid var(--border);
+    border-radius:18px; padding:14px 10px; margin-bottom:10px;
+  }
+  .hud-item{text-align:center}
+  .hud-label{display:block; font-size:11px; text-transform:uppercase; letter-spacing:.6px; color:var(--muted); margin-bottom:4px}
+  .hud-value{font-size:17px; font-weight:800; font-variant-numeric:tabular-nums}
+  .hud-value.lives{letter-spacing:-2px; font-size:15px}
+
+  .timer-track{height:8px; background:var(--panel2); border-radius:999px; overflow:hidden; margin-bottom:18px}
+  .timer-fill{height:100%; width:100%; border-radius:999px;
+    background:linear-gradient(90deg,var(--good),var(--accent));
+    transition:width .1s linear, background .3s}
+  .timer-fill.low{background:linear-gradient(90deg,#ffb347,var(--bad))}
+
+  .q-card{background:var(--panel); border:1px solid var(--border); border-radius:22px; padding:26px 24px 24px; position:relative}
+  .q-card.flash-good{animation:flashGood .5s ease}
+  .q-card.flash-bad{animation:flashBad .5s ease}
+  @keyframes flashGood{0%,100%{box-shadow:0 0 0 0 rgba(45,212,167,0)}40%{box-shadow:0 0 0 4px rgba(45,212,167,.5)}}
+  @keyframes flashBad{0%,100%{box-shadow:0 0 0 0 rgba(255,92,108,0)}40%{box-shadow:0 0 0 4px rgba(255,92,108,.5)}}
+  .q-card.shake{animation:shake .35s}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+  .q-topic{
+    display:inline-block; font-size:11px; font-weight:800; letter-spacing:.7px;
+    text-transform:uppercase; color:var(--accent);
+    background:rgba(108,140,255,.12); padding:5px 12px; border-radius:999px; margin-bottom:14px;
+  }
+  body[data-theme="jungle"] .q-topic{background:rgba(45,212,167,.12)}
+  body[data-theme="cyber"] .q-topic{background:rgba(255,77,210,.12)}
+  body[data-theme="ocean"] .q-topic{background:rgba(34,184,207,.12)}
+  body[data-theme="volcano"] .q-topic{background:rgba(255,122,61,.12)}
+
+  .q-text{font-size:16px; line-height:1.6; margin-bottom:20px; white-space:pre-line}
+
+  .options{display:grid; gap:10px}
+  .opt{
+    display:block; width:100%; text-align:left;
+    background:var(--panel2); border:2px solid var(--border);
+    color:var(--text); border-radius:14px; padding:15px 18px;
+    font-size:16px; font-family:inherit; cursor:pointer; transition:.15s;
+  }
+  .opt:hover:not(:disabled){border-color:var(--accent); transform:translateX(5px)}
+  .opt:disabled{cursor:default; opacity:.75}
+  .opt.correct{border-color:var(--good); background:rgba(45,212,167,.16); opacity:1}
+  .opt.wrong{border-color:var(--bad); background:rgba(255,92,108,.16); opacity:1}
+
+  .input-row{display:flex; gap:10px; flex-wrap:wrap}
+  .game-input{
+    flex:1; min-width:180px;
+    background:var(--panel2); border:2px solid var(--border); color:var(--text);
+    border-radius:14px; padding:15px 18px; font-size:16px;
+    font-family:inherit; outline:none; transition:.15s;
+  }
+  .game-input:focus{border-color:var(--accent); box-shadow:0 0 0 4px rgba(108,140,255,.13)}
+  .game-input:disabled{opacity:.6}
+
+  .btn{border:none; border-radius:14px; padding:15px 26px; font-size:16px; font-weight:800; cursor:pointer; font-family:inherit; transition:.15s; white-space:nowrap;}
+  .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; box-shadow:0 8px 24px rgba(0,0,0,.4);}
+  .btn.primary:hover{transform:translateY(-2px); box-shadow:0 12px 28px rgba(0,0,0,.5)}
+  .btn.ghost{background:transparent; border:2px solid var(--border); color:var(--text)}
+  .btn.ghost:hover{border-color:var(--accent); color:var(--accent)}
+
+  .q-feedback{margin-top:18px; font-size:15px; font-weight:700; display:none}
+  .q-feedback.show{display:block; animation:pop .25s ease}
+  .q-feedback.ok{color:var(--good)}
+  .q-feedback.bad{color:var(--bad)}
+  @keyframes pop{from{opacity:0; transform:scale(.94)} to{opacity:1; transform:scale(1)}}
+
+  .result-hero{text-align:center; padding:20px 0 10px}
+  .result-emoji{font-size:56px; display:block; margin-bottom:10px; animation:bounceIn .6s ease}
+  @keyframes bounceIn{0%{transform:scale(.3); opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1); opacity:1}}
+  .result-rank{font-size:26px; font-weight:800; margin:0 0 6px; letter-spacing:-.5px}
+  .result-score{font-size:44px; font-weight:900; color:var(--gold);
+    font-variant-numeric:tabular-nums; letter-spacing:-1.5px;
+    text-shadow:0 4px 20px rgba(255,201,77,.3); margin:6px 0}
+
+  .stat-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:22px 0}
+  .stat{background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:14px 10px; text-align:center}
+  .stat-v{font-size:20px; font-weight:800; display:block}
+  .stat-l{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px}
+
+  .badges{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:6px 0 26px}
+  .badge{background:var(--panel); border:1px solid var(--border); border-radius:999px; padding:8px 16px; font-size:13px; font-weight:700;}
+
+  .review-title{font-size:17px; font-weight:800; margin:26px 0 12px}
+  .review-item{
+    background:var(--panel); border:1px solid var(--border);
+    border-left:4px solid var(--border); border-radius:14px;
+    padding:16px 18px; margin-bottom:10px; font-size:14px;
+  }
+  .review-item.ok{border-left-color:var(--good)}
+  .review-item.bad{border-left-color:var(--bad)}
+  .ri-head{display:flex; gap:10px; align-items:center; font-size:12px; color:var(--muted); margin-bottom:8px; flex-wrap:wrap}
+  .ri-num{font-weight:800; color:var(--text)}
+  .ri-q{white-space:pre-line; margin-bottom:10px; line-height:1.5}
+  .ri-a{font-weight:700; margin-bottom:6px}
+  .ri-a b{color:var(--good)}
+  .ri-sol{color:var(--muted); font-size:13px; white-space:pre-line; line-height:1.5}
+
+  .result-actions{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:28px}
+
+  .confetti{position:fixed; top:-12px; width:9px; height:14px; border-radius:2px; z-index:999; pointer-events:none; animation:fall linear forwards;}
+  @keyframes fall{to{transform:translateY(105vh) rotate(720deg); opacity:.05}}
+
+  .float-pts{
+    position:fixed; top:32%; font-size:34px; font-weight:900; color:var(--gold);
+    z-index:998; pointer-events:none; text-shadow:0 3px 16px rgba(0,0,0,.7);
+    animation:floatUp 1.2s ease-out forwards;
+  }
+  @keyframes floatUp{
+    0%{opacity:0; transform:translateY(0) scale(.6)}
+    20%{opacity:1; transform:translateY(-10px) scale(1.15)}
+    100%{opacity:0; transform:translateY(-100px) scale(1)}
+  }
+
+  @media(max-width:520px){
+    .hero-title{font-size:23px}
+    .q-text{font-size:15px}
+    .q-card{padding:20px 16px}
+    .result-score{font-size:36px}
+  }
+</style>
+</head>
+<body data-theme="space">
+
+<div class="topbar">
+  <div class="brand">🎮 ОГЭ-Квест</div>
+  <div class="variant-badge" id="variantBadge">Космос</div>
+</div>
+
+<main>
+
+  <section id="startScreen" class="screen active">
+    <h1 class="hero-title">Выбери мир — и в бой</h1>
+    <p class="hero-sub">16 заданий · 3 жизни · бонус за скорость и серию верных ответов</p>
+
+    <div class="theme-grid">
+      <button class="theme-card" data-v="1"><span class="tc-emoji">🚀</span><div class="tc-title">Космос</div><div class="tc-desc">Базовый</div></button>
+      <button class="theme-card" data-v="2"><span class="tc-emoji">🌿</span><div class="tc-title">Джунгли</div><div class="tc-desc">Средний</div></button>
+      <button class="theme-card" data-v="3"><span class="tc-emoji">⚡</span><div class="tc-title">Киберпанк</div><div class="tc-desc">Продвинутый</div></button>
+      <button class="theme-card" data-v="4"><span class="tc-emoji">🌊</span><div class="tc-title">Океан</div><div class="tc-desc">Средний+</div></button>
+      <button class="theme-card" data-v="5"><span class="tc-emoji">🌋</span><div class="tc-title">Вулкан</div><div class="tc-desc">Сложный</div></button>
+    </div>
+  </section>
+
+  <section id="gameScreen" class="screen">
+    <div class="hud">
+      <div class="hud-item"><span class="hud-label">Очки</span><span class="hud-value" id="hudScore">0</span></div>
+      <div class="hud-item"><span class="hud-label">Жизни</span><span class="hud-value lives" id="hudLives">❤️❤️❤️</span></div>
+      <div class="hud-item"><span class="hud-label">Серия</span><span class="hud-value" id="hudStreak">0</span></div>
+      <div class="hud-item"><span class="hud-label">Вопрос</span><span class="hud-value" id="hudProgress">1/16</span></div>
+    </div>
+    <div class="timer-track"><div class="timer-fill" id="timerFill"></div></div>
+    <div class="q-card" id="qCard">
+      <div class="q-topic" id="qTopic"></div>
+      <div class="q-text" id="qText"></div>
+      <div class="q-body" id="qBody"></div>
+      <div class="q-feedback" id="qFeedback"></div>
+    </div>
+  </section>
+
+  <section id="resultScreen" class="screen"></section>
+</main>
+
+<script>
+/* =========================================================
+   ВОПРОСЫ — 5 вариантов × 16 заданий
+   ========================================================= */
+const QUESTIONS = {
+
+  1: [
+    {topic:'Системы счисления',type:'input',q:'Переведи число 45 из десятичной системы в двоичную.',a:'101101',sol:'45 = 32 + 8 + 4 + 1 = 101101₂'},
+    {topic:'Алгебра логики',type:'choice',q:'Для какого X истинно:\nНЕ (X < 6) И (X < 7)',opts:['5','6','7','8'],a:1,sol:'НЕ (X < 6) = X ≥ 6. Вместе с X < 7 даёт 6 ≤ X < 7, то есть X = 6.'},
+    {topic:'Количество информации',type:'input',q:'Сколько бит в 1 Кбайте?',a:'8192',sol:'1 Кбайт = 1024 байта = 1024 × 8 = 8192 бита.'},
+    {topic:'Файловая система',type:'choice',q:'Файл: D:\\ОГЭ\\Задания\\Задача.doc\nВ каком каталоге хранится файл?',opts:['D:\\ОГЭ','D:\\ОГЭ\\Задания','Задания','D:\\'],a:1,sol:'Полный путь = каталог + имя файла. Убираем имя файла — остаётся D:\\ОГЭ\\Задания.'},
+    {topic:'Циклы',type:'input',q:'s := 0\nдля i от 1 до 5\n    s := s + i\nЧему равно s?',a:'15',sol:'s = 1 + 2 + 3 + 4 + 5 = 15.'},
+    {topic:'Исполнитель алгоритма',type:'choice',q:'Черепашка:\nПовтори 4 [Вперёд 50, Направо 90]\nКакая фигура?',opts:['Квадрат','Треугольник','Ромб','Шестиугольник'],a:0,sol:'4 равных отрезка с поворотом на 90°. Суммарный поворот 360° — квадрат.'},
+    {topic:'Кодирование текста',type:'input',q:'Слово «Привет» в 16-битной кодировке.\nСколько байт?',a:'12',sol:'6 символов × 16 бит = 96 бит = 12 байт.'},
+    {topic:'Графы и пути',type:'input',q:'Дороги: A–B=2, B–D=3, A–C=5, C–D=1, D–E=4.\nКратчайший путь из A в E?',a:'9',sol:'A–B–D–E = 2+3+4 = 9.\nA–C–D–E = 5+1+4 = 10.\nМинимум = 9.'},
+    {topic:'Алгебра логики',type:'choice',q:'Чему равно НЕ (A ИЛИ B)?',opts:['НЕ A И НЕ B','НЕ A ИЛИ НЕ B','A И B','A ИЛИ B'],a:0,sol:'Закон де Моргана: НЕ (A ИЛИ B) = НЕ A И НЕ B.'},
+    {topic:'Количество информации',type:'input',q:'Сообщение 32 бита, 8-битная кодировка.\nСколько символов?',a:'4',sol:'32 ÷ 8 = 4 символа.'},
+    {topic:'Интернет-адресация',type:'choice',q:'В адресе http://school.ru/doc.txt\nчто является протоколом?',opts:['http','school.ru','doc.txt','//'],a:0,sol:'Схема адреса: протокол://сервер/файл.\nПротокол — http.'},
+    {topic:'Системы счисления',type:'input',q:'Переведи 100000₂ в десятичную.',a:'32',sol:'100000₂ = 1 × 2⁵ = 32.'},
+    {topic:'Циклы',type:'input',q:'s := 1\nдля i от 1 до 4\n    s := s * 2\nЧему равно s?',a:'16',sol:'Удвоение 4 раза: 1 → 2 → 4 → 8 → 16.'},
+    {topic:'Кодирование текста',type:'input',q:'Слово «ОГЭ» в 16-битной кодировке.\nСколько байт?',a:'6',sol:'3 символа × 16 бит = 48 бит = 6 байт.'},
+    {topic:'Поисковые запросы',type:'input',q:'Маша&(Оля|Катя)=500\nМаша&Оля&Катя=100\nМаша&Оля=300\nНайди Маша&Катя.',a:'300',sol:'500 = 300 + X − 100\nX = 500 − 300 + 100 = 300.'},
+    {topic:'Анализ программы',type:'input',q:'если (s > 10) или (t > A): YES, иначе NO.\nПары: (5,2), (15,2), (5,12), (15,12), (10,5).\nНайди A, при котором YES ровно 3 раза.',a:'10',sol:'При A=10:\n(5,2)→NO, (15,2)→YES, (5,12)→YES, (15,12)→YES, (10,5)→NO.\nИтого 3 YES.'}
+  ],
+
+  2: [
+    {topic:'Системы счисления',type:'input',q:'Переведи 100000₂ в десятичную.',a:'32',sol:'100000₂ = 1 × 2⁵ = 32.'},
+    {topic:'Алгебра логики',type:'choice',q:'Для какого X истинно:\nНЕ (X < 5) И (X < 7)',opts:['4','5','7','8'],a:1,sol:'НЕ (X < 5) = X ≥ 5. Вместе с X < 7 даёт X = 5.'},
+    {topic:'Количество информации',type:'input',q:'Сколько Кбайт в 2 Мбайтах?',a:'2048',sol:'1 Мбайт = 1024 Кбайт.\n2 Мбайта = 2048 Кбайт.'},
+    {topic:'Интернет-адресация',type:'choice',q:'В адресе ftp://files.net/data.zip\nчто является сервером?',opts:['ftp','files.net','data.zip','://'],a:1,sol:'Схема адреса: протокол://сервер/файл.\nСервер — files.net.'},
+    {topic:'Циклы',type:'input',q:'s := 0\nдля i от 1 до 6\n    s := s + i\nЧему равно s?',a:'21',sol:'s = 1+2+3+4+5+6 = 21.'},
+    {topic:'Исполнитель алгоритма',type:'choice',q:'Черепашка:\nПовтори 3 [Вперёд 40, Направо 120]\nКакая фигура?',opts:['Квадрат','Треугольник','Шестиугольник','Ромб'],a:1,sol:'3 отрезка с поворотом на 120°. Суммарный поворот 360° — треугольник.'},
+    {topic:'Кодирование текста',type:'input',q:'Слово «ОГЭ» в 16-битной кодировке.\nСколько байт?',a:'6',sol:'3 × 16 бит = 48 бит = 6 байт.'},
+    {topic:'Графы и пути',type:'input',q:'Дороги: A–B=1, B–C=2, A–C=5, C–D=3, B–D=6.\nКратчайший путь из A в D?',a:'6',sol:'A–B–C–D = 1+2+3 = 6.\nA–C–D = 5+3 = 8.\nA–B–D = 1+6 = 7.\nМинимум = 6.'},
+    {topic:'Алгебра логики',type:'choice',q:'Чему равно A И (B ИЛИ C)?',opts:['(A И B) ИЛИ (A И C)','(A ИЛИ B) И C','A ИЛИ B ИЛИ C','(A ИЛИ B) ИЛИ C'],a:0,sol:'Распределительный закон: A И (B ИЛИ C) = (A И B) ИЛИ (A И C).'},
+    {topic:'Количество информации',type:'input',q:'Сколько бит в 2 байтах?',a:'16',sol:'1 байт = 8 бит.\n2 байта = 16 бит.'},
+    {topic:'Поисковые запросы',type:'input',q:'Маша&(Оля|Катя)=700\nМаша&Оля&Катя=150\nМаша&Оля=400\nНайди Маша&Катя.',a:'450',sol:'700 = 400 + X − 150\nX = 700 − 400 + 150 = 450.'},
+    {topic:'Системы счисления',type:'input',q:'Переведи 27₁₀ в двоичную.',a:'11011',sol:'27 = 16 + 8 + 2 + 1 = 11011₂'},
+    {topic:'Файловая система',type:'choice',q:'Файл: D:\\Работы\\Задачи\\prog.exe\nВ каком каталоге файл?',opts:['D:\\','D:\\Работы','D:\\Работы\\Задачи','prog.exe'],a:2,sol:'Убираем имя файла — получаем D:\\Работы\\Задачи.'},
+    {topic:'Анализ программы',type:'input',q:'если (s < 10) и (t > A): YES, иначе NO.\nПары: (1,2), (11,2), (1,12), (11,12), (5,5).\nНайди A, при котором YES ровно 2 раза.',a:'3',sol:'При A=3:\n(1,2)→NO, (11,2)→NO, (1,12)→YES, (11,12)→NO, (5,5)→YES.\nИтого 2 YES.'},
+    {topic:'Циклы',type:'input',q:'s := 0\nдля i от 1 до 10\n    если i mod 2 = 0, то s := s + i\nЧему равно s?',a:'30',sol:'Сумма чётных: 2+4+6+8+10 = 30.'},
+    {topic:'Кодирование текста',type:'input',q:'Сообщение 24 бита, 8-битная кодировка.\nСколько символов?',a:'3',sol:'24 ÷ 8 = 3 символа.'}
+  ],
+
+  3: [
+    {topic:'Системы счисления',type:'input',q:'Переведи 46₁₀ в двоичную.',a:'101110',sol:'46 = 32 + 8 + 4 + 2 = 101110₂'},
+    {topic:'Системы счисления',type:'input',q:'Сколько единиц в двоичной записи числа 46?',a:'4',sol:'46 = 101110₂. Четыре единицы.'},
+    {topic:'Алгебра логики',type:'choice',q:'Для какого X истинно:\n(X > 10) И НЕ (X > 15)',opts:['8','10','12','16'],a:2,sol:'НЕ (X > 15) = X ≤ 15. Вместе: 10 < X ≤ 15. Подходит 12.'},
+    {topic:'Скорость передачи',type:'input',q:'Файл 4 Кбайт, скорость 1024 бит/с.\nСколько секунд?',a:'32',sol:'4 Кбайт = 4×1024×8 = 32 768 бит.\n32 768 ÷ 1024 = 32 секунды.'},
+    {topic:'Циклы',type:'input',q:'s := 0\nдля i от 1 до 5\n    s := s + i*i\nЧему равно s?',a:'55',sol:'s = 1²+2²+3²+4²+5² = 1+4+9+16+25 = 55.'},
+    {topic:'Количество информации',type:'input',q:'Реферат: 8 стр × 40 строк × 32 символа.\nКаждый символ — 8 бит.\nОбъём в Кбайтах?',a:'10',sol:'8×40×32 = 10 240 символов.\n10 240 × 8 = 81 920 бит = 10 240 байт = 10 Кбайт.'},
+    {topic:'Интернет-адресация',type:'choice',q:'В адресе https://wiki.org/page.html\nчто является сервером?',opts:['https','wiki.org','page.html','://'],a:1,sol:'Сервер — wiki.org.'},
+    {topic:'Графы и пути',type:'input',q:'Дороги: A–B=3, A–C=2, B–C=1, B–D=4, C–D=2, C–E=5, D–E=1.\nПуть A→E?',a:'5',sol:'A–C–D–E = 2+2+1 = 5 — минимум.'},
+    {topic:'Алгебра логики',type:'choice',q:'Чему равно НЕ (A И B)?',opts:['НЕ A И НЕ B','НЕ A ИЛИ НЕ B','A ИЛИ B','НЕ A И B'],a:1,sol:'Закон де Моргана: НЕ (A И B) = НЕ A ИЛИ НЕ B.'},
+    {topic:'Количество информации',type:'input',q:'Сколько Кбайт в 2048 байтах?',a:'2',sol:'2048 ÷ 1024 = 2 Кбайта.'},
+    {topic:'Системы счисления',type:'input',q:'Переведи 111111₂ в десятичную.',a:'63',sol:'1+2+4+8+16+32 = 63.'},
+    {topic:'Поисковые запросы',type:'input',q:'Диана&(Аврора|Паллада)=800\nДиана&Аврора&Паллада=220\nДиана&Аврора=550\nНайди Диана&Паллада.',a:'470',sol:'800 = 550 + X − 220\nX = 800 − 550 + 220 = 470.'},
+    {topic:'Анализ программы',type:'input',q:'если (s > 5) ИЛИ (t < A): YES, иначе NO.\nПары: (1,2), (6,2), (1,7), (6,7), (-1,-2).\nНайди A, при котором YES ровно 3 раза.',a:'2',sol:'При A=2:\n(1,2)→NO, (6,2)→YES, (1,7)→NO, (6,7)→YES, (-1,-2)→YES.\nИтого 3 YES.'},
+    {topic:'Файловая система',type:'input',q:'Файл photo.jpg лежит в D:\\Фото\\Море.\nЗапиши полное имя файла.',a:'D:\\Фото\\Море\\photo.jpg',sol:'Полный путь = каталог + имя файла:\nD:\\Фото\\Море\\photo.jpg'},
+    {topic:'Циклы',type:'input',q:'s := 0\nдля i от 1 до 4\n    s := s + i*i\nЧему равно s?',a:'30',sol:'1²+2²+3²+4² = 1+4+9+16 = 30.'},
+    {topic:'Кодирование текста',type:'input',q:'Сообщение 128 бит, 16-битная кодировка.\nСколько символов?',a:'8',sol:'128 ÷ 16 = 8 символов.'}
+  ],
+
+  4: [
+    {topic:'Количество информации',type:'input',q:'Сколько бит в 1 Мбайте?',a:'8388608',sol:'1 Мбайт = 1024 × 1024 байт = 1 048 576 байт.\n× 8 = 8 388 608 бит.'},
+    {topic:'Системы счисления',type:'input',q:'Переведи 50₁₀ в двоичную.',a:'110010',sol:'50 = 32 + 16 + 2 = 110010₂'},
+    {topic:'Алгебра логики',type:'choice',q:'Для какого X истинно:\nНЕ (X > 5) И (X > 3)',opts:['2','4','6','8'],a:1,sol:'НЕ (X > 5) = X ≤ 5. Вместе с X > 3 даёт 3 < X ≤ 5. Подходит 4.'},
+    {topic:'Исполнитель алгоритма',type:'choice',q:'Черепашка:\nПовтори 6 [Вперёд 40, Направо 60]\nКакая фигура?',opts:['Квадрат','Треугольник','Шестиугольник','Ромб'],a:2,sol:'6 × 60° = 360° — шестиугольник.'},
+    {topic:'Циклы',type:'input',q:'s := 0\nдля i от 1 до 10\n    s := s + i\nЧему равно s?',a:'55',sol:'1+2+...+10 = 55.'},
+    {topic:'Кодирование текста',type:'input',q:'Слово «Файл» в 16-битной кодировке.\nСколько байт?',a:'8',sol:'4 символа × 16 = 64 бит = 8 байт.'},
+    {topic:'Графы и пути',type:'input',q:'Дороги: A–B=2, A–C=4, B–C=1, B–D=5, C–D=2, D–E=3.\nПуть A→E?',a:'8',sol:'A–B–C–D–E = 2+1+2+3 = 8 — минимум.'},
+    {topic:'Алгебра логики',type:'choice',q:'Чему равно A ИЛИ (B И C)?',opts:['(A ИЛИ B) И (A ИЛИ C)','A И B И C','A ИЛИ B ИЛИ C','(A И B) ИЛИ C'],a:0,sol:'Распределительный закон: A ИЛИ (B И C) = (A ИЛИ B) И (A ИЛИ C).'},
+    {topic:'Интернет-адресация',type:'choice',q:'В адресе https://ru.wikipedia.org/wiki\nчто является сервером?',opts:['https','ru.wikipedia.org','wiki','://'],a:1,sol:'Сервер — ru.wikipedia.org.'},
+    {topic:'Скорость передачи',type:'input',q:'Файл 2 Кбайт, скорость 512 бит/с.\nСколько секунд?',a:'32',sol:'2 Кбайт = 16 384 бит.\n16 384 ÷ 512 = 32 секунды.'},
+    {topic:'Системы счисления',type:'input',q:'Переведи 111₁₀ в восьмеричную.',a:'157',sol:'111 / 8 = 13 ост. 7\n13 / 8 = 1 ост. 5\n1 / 8 = 0 ост. 1\n→ 157₈'},
+    {topic:'Поисковые запросы',type:'input',q:'Солнце&(Лето|Море)=400\nСолнце&Лето&Море=80\nСолнце&Лето=250\nНайди Солнце&Море.',a:'230',sol:'400 = 250 + X − 80\nX = 400 − 250 + 80 = 230.'},
+    {topic:'Файловая система',type:'input',q:'Файл photo.jpg лежит в D:\\Фото\\Море.\nЗапиши полное имя файла.',a:'D:\\Фото\\Море\\photo.jpg',sol:'D:\\Фото\\Море\\photo.jpg'},
+    {topic:'Анализ программы',type:'input',q:'если (s > 5) ИЛИ (t > A): YES, иначе NO.\nПары: (1,2), (6,2), (1,7), (6,7), (5,5).\nНайди наименьшее A, при котором YES ровно 2 раза.',a:'7',sol:'При A=7:\n(1,2)→NO, (6,2)→YES, (1,7)→NO, (6,7)→YES, (5,5)→NO.\nИтого 2 YES. При A=6 было бы 3 YES.'},
+    {topic:'Количество информации',type:'input',q:'Сколько байт в 4 Кбайтах?',a:'4096',sol:'4 × 1024 = 4096 байт.'},
+    {topic:'Кодирование текста',type:'input',q:'Сообщение 24 бита, 8-битная кодировка.\nСколько символов?',a:'3',sol:'24 ÷ 8 = 3 символа.'}
+  ],
+
+  5: [
+    {topic:'Системы счисления',type:'input',q:'Переведи 100₁₀ в двоичную.',a:'1100100',sol:'100 = 64 + 32 + 4 = 1100100₂'},
+    {topic:'Алгебра логики',type:'choice',q:'Для какого X истинно:\n(X > 4) И НЕ (X > 8)',opts:['3','5','9','10'],a:1,sol:'НЕ (X > 8) = X ≤ 8. Вместе: 4 < X ≤ 8. Подходит 5.'},
+    {topic:'Скорость передачи',type:'input',q:'Файл 4 Кбайт, скорость 2048 бит/с.\nСколько секунд?',a:'16',sol:'4 Кбайт = 32 768 бит.\n32 768 ÷ 2048 = 16 секунд.'},
+    {topic:'Исполнитель алгоритма',type:'choice',q:'Черепашка:\nПовтори 8 [Вперёд 20, Направо 45]\nКакая фигура?',opts:['Квадрат','Шестиугольник','Восьмиугольник','Ромб'],a:2,sol:'8 × 45° = 360° — восьмиугольник.'},
+    {topic:'Циклы',type:'input',q:'s := 0\nдля i от 1 до 6\n    s := s + i*i\nЧему равно s?',a:'91',sol:'1+4+9+16+25+36 = 91.'},
+    {topic:'Кодирование текста',type:'input',q:'Слово «Кот» в 16-битной кодировке.\nСколько байт?',a:'6',sol:'3 × 16 = 48 бит = 6 байт.'},
+    {topic:'Графы и пути',type:'input',q:'Дороги: A–B=1, A–C=2, B–C=3, B–D=4, C–D=1, D–E=5.\nПуть A→E?',a:'8',sol:'A–C–D–E = 2+1+5 = 8 — минимум.'},
+    {topic:'Алгебра логики',type:'choice',q:'Чему равно НЕ (A) И НЕ (B)?',opts:['НЕ (A ИЛИ B)','НЕ (A И B)','A ИЛИ B','A И B'],a:0,sol:'По закону де Моргана: НЕ A И НЕ B = НЕ (A ИЛИ B).'},
+    {topic:'Интернет-адресация',type:'input',q:'Доступ к файлу index.html на сервере site.com по протоколу https.\nФрагменты: 1) html  2) index  3) com  4) https  5) site  6) /  7) ://  8) .\nЗапиши последовательность цифр.',a:'475836281',sol:'https://site.com/index.html\n4 (https) 7 (://) 5 (site) 8 (.) 3 (com) 6 (/) 2 (index) 8 (.) 1 (html)'},
+    {topic:'Поисковые запросы',type:'input',q:'Луна&(Звёзды|Планеты)=300\nЛуна&Звёзды&Планеты=50\nЛуна&Звёзды=180\nНайди Луна&Планеты.',a:'170',sol:'300 = 180 + X − 50\nX = 300 − 180 + 50 = 170.'},
+    {topic:'Файловая система',type:'choice',q:'Файл: D:\\Учёба\\Информатика\\тест.doc\nВ каком каталоге?',opts:['D:\\','D:\\Учёба','D:\\Учёба\\Информатика','тест.doc'],a:2,sol:'Убираем имя — D:\\Учёба\\Информатика.'},
+    {topic:'Системы счисления',type:'input',q:'Переведи 101₁₀ в восьмеричную.',a:'145',sol:'101 / 8 = 12 ост. 5\n12 / 8 = 1 ост. 4\n1 / 8 = 0 ост. 1\n→ 145₈'},
+    {topic:'Анализ программы',type:'input',q:'если (s > 10) или (t > A): YES, иначе NO.\nПары: (1,2), (11,2), (1,12), (11,12), (10,10).\nНайди наибольшее A, при котором YES ровно 3 раза.',a:'11',sol:'A=10: 3 YES. A=11: 3 YES. A=12: 2 YES.\nНаибольшее A с тремя YES = 11.'},
+    {topic:'Количество информации',type:'input',q:'Сколько байт в 8 Кбайтах?',a:'8192',sol:'8 × 1024 = 8192 байт.'},
+    {topic:'Циклы',type:'input',q:'Найди 5! (факториал пяти).',a:'120',sol:'5! = 1×2×3×4×5 = 120.'},
+    {topic:'Кодирование текста',type:'input',q:'Слово «Код» в 8-битной кодировке.\nСколько байт?',a:'3',sol:'3 × 8 = 24 бит = 3 байта.'}
+  ]
+};
+
+const THEMES = {
+  1:{name:'Космос',   theme:'space',  emoji:'🚀'},
+  2:{name:'Джунгли',  theme:'jungle', emoji:'🌿'},
+  3:{name:'Киберпанк',theme:'cyber',  emoji:'⚡'},
+  4:{name:'Океан',    theme:'ocean',  emoji:'🌊'},
+  5:{name:'Вулкан',   theme:'volcano',emoji:'🌋'}
+};
+
+const TOTAL_Q = 16;
+const TIME_PER_Q = 40;
+
+const state = {
+  variant:1, qIndex:0, score:0, lives:3, streak:0,
+  bestStreak:0, locked:false, timeLeft:TIME_PER_Q,
+  timerId:null, results:[], fastAnswers:0
+};
+
+/* ===== ЗВУК ===== */
+let AC = null;
+function initAudio(){
+  if (AC) return;
+  try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){ AC = null; }
+}
+function tone(freq, dur, type, vol, delay){
+  if (!AC) return;
+  const t0 = AC.currentTime + (delay || 0);
+  const osc = AC.createOscillator(), gain = AC.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.setValueAtTime(freq, t0);
+  gain.gain.setValueAtTime(0, t0);
+  gain.gain.linearRampToValueAtTime(vol || 0.07, t0 + 0.015);
+  gain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+  osc.connect(gain); gain.connect(AC.destination);
+  osc.start(t0); osc.stop(t0 + dur + 0.05);
+}
+const sfxClick = () => tone(520, 0.06, 'sine', 0.04);
+const sfxCorrect = () => { tone(660,0.09,'square',0.05); tone(880,0.13,'square',0.05,0.08); };
+const sfxWrong = () => { tone(220,0.16,'sawtooth',0.06); tone(160,0.22,'sawtooth',0.06,0.13); };
+const sfxWin = () => [523,659,784,1047].forEach((f,i) => tone(f,0.16,'triangle',0.06,i*0.11));
+const sfxLose = () => [420,340,260,190].forEach((f,i) => tone(f,0.2,'sawtooth',0.05,i*0.14));
+
+/* ===== ЭФФЕКТЫ ===== */
+function confetti(n){
+  const colors = ['#6c8cff','#a06bff','#2dd4a7','#ffc94d','#ff5c6c','#4df0ff'];
+  for (let i = 0; i < (n || 30); i++){
+    const el = document.createElement('div');
+    el.className = 'confetti';
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.background = colors[Math.floor(Math.random() * colors.length)];
+    el.style.animationDelay = (Math.random() * 0.3) + 's';
+    el.style.animationDuration = (0.9 + Math.random() * 0.9) + 's';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2300);
+  }
+}
+function floatPoints(text){
+  const el = document.createElement('div');
+  el.className = 'float-pts';
+  el.textContent = text;
+  el.style.left = (35 + Math.random() * 30) + '%';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1250);
+}
+
+/* ===== НАВИГАЦИЯ ===== */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ===== СТАРТ ===== */
+function startGame(variant){
+  initAudio(); sfxClick();
+  state.variant = variant;
+  state.qIndex = 0; state.score = 0; state.lives = 3;
+  state.streak = 0; state.bestStreak = 0; state.locked = false;
+  state.results = []; state.fastAnswers = 0;
+  const t = THEMES[variant];
+  document.body.setAttribute('data-theme', t.theme);
+  document.getElementById('variantBadge').textContent = t.emoji + ' ' + t.name;
+  showScreen('gameScreen');
+  renderQuestion();
+}
+
+/* ===== РЕНДЕР ===== */
+function renderQuestion(){
+  const q = QUESTIONS[state.variant][state.qIndex];
+  state.locked = false;
+  const card = document.getElementById('qCard');
+  card.className = 'q-card';
+  document.getElementById('qTopic').textContent = q.topic;
+  document.getElementById('qText').textContent = q.q;
+  const fb = document.getElementById('qFeedback');
+  fb.className = 'q-feedback'; fb.textContent = '';
+  const body = document.getElementById('qBody');
+  body.innerHTML = '';
+
+  if (q.type === 'choice'){
+    const wrap = document.createElement('div');
+    wrap.className = 'options';
+    q.opts.forEach((opt, i) => {
+      const b = document.createElement('button');
+      b.className = 'opt';
+      b.textContent = opt;
+      b.dataset.index = i;
+      b.onclick = () => answerChoice(i, b);
+      wrap.appendChild(b);
+    });
+    body.appendChild(wrap);
+  } else {
+    const row = document.createElement('div');
+    row.className = 'input-row';
+    const inp = document.createElement('input');
+    inp.className = 'game-input';
+    inp.placeholder = 'Введи ответ…';
+    inp.autocomplete = 'off';
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') answerInput(inp); });
+    const btn = document.createElement('button');
+    btn.className = 'btn primary';
+    btn.textContent = 'Ответить';
+    btn.onclick = () => answerInput(inp);
+    row.appendChild(inp); row.appendChild(btn);
+    body.appendChild(row);
+    setTimeout(() => inp.focus(), 120);
+  }
+  updateHUD();
+  startTimer();
+}
+
+function startTimer(){
+  clearInterval(state.timerId);
+  state.timeLeft = TIME_PER_Q;
+  updateTimerBar();
+  state.timerId = setInterval(() => {
+    state.timeLeft -= 0.1;
+    if (state.timeLeft <= 0){
+      state.timeLeft = 0; updateTimerBar();
+      clearInterval(state.timerId);
+      if (!state.locked) handleWrong('⏱ Время вышло!');
+    } else updateTimerBar();
+  }, 100);
+}
+
+function updateTimerBar(){
+  const pct = Math.max(0, state.timeLeft / TIME_PER_Q * 100);
+  const bar = document.getElementById('timerFill');
+  bar.style.width = pct + '%';
+  bar.classList.toggle('low', pct < 30);
+}
+
+/* ===== ОТВЕТЫ ===== */
+function norm(v){
+  return String(v).toLowerCase().replace(/\s+/g,'').replace(/ё/g,'е');
+}
+function matchAnswer(user, correct){
+  const nu = norm(user), nc = norm(correct);
+  if (nu === nc) return true;
+  return nu.replace(/[\\/]/g,'/') === nc.replace(/[\\/]/g,'/');
+}
+
+function answerChoice(index, btn){
+  if (state.locked) return;
+  const q = QUESTIONS[state.variant][state.qIndex];
+  if (index === q.a){ btn.classList.add('correct'); handleCorrect(); }
+  else { btn.classList.add('wrong'); handleWrong('❌ Неверно!'); }
+}
+
+function answerInput(inp){
+  if (state.locked) return;
+  const q = QUESTIONS[state.variant][state.qIndex];
+  const val = inp.value.trim();
+  if (!val){ inp.focus(); return; }
+  inp.disabled = true;
+  if (matchAnswer(val, q.a)) handleCorrect();
+  else handleWrong('❌ Неверно!');
+}
+
+/* ===== РЕЗУЛЬТАТ ===== */
+function handleCorrect(){
+  state.locked = true;
+  clearInterval(state.timerId);
+  state.streak++;
+  state.bestStreak = Math.max(state.bestStreak, state.streak);
+  if (state.timeLeft > 25) state.fastAnswers++;
+  const base = 100;
+  const streakBonus = Math.min(state.streak - 1, 5) * 25;
+  const timeBonus = Math.round(state.timeLeft * 2);
+  const gain = base + streakBonus + timeBonus;
+  state.score += gain;
+  state.results.push({q: state.qIndex, ok: true});
+  sfxCorrect(); confetti(22); floatPoints('+' + gain);
+  document.getElementById('qCard').classList.add('flash-good');
+  const fb = document.getElementById('qFeedback');
+  fb.className = 'q-feedback show ok';
+  fb.textContent = state.streak > 1
+    ? '🔥 Серия ×' + state.streak + '! +' + gain + ' очков'
+    : '✅ Верно! +' + gain + ' очков';
+  updateHUD();
+  setTimeout(nextQuestion, 1100);
+}
+
+function handleWrong(msg){
+  state.locked = true;
+  clearInterval(state.timerId);
+  state.streak = 0;
+  state.lives--;
+  state.results.push({q: state.qIndex, ok: false});
+  sfxWrong();
+  const card = document.getElementById('qCard');
+  card.classList.add('shake','flash-bad');
+  setTimeout(() => card.classList.remove('shake'), 400);
+  const fb = document.getElementById('qFeedback');
+  fb.className = 'q-feedback show bad';
+  fb.textContent = msg + '  −1 жизнь';
+  updateHUD();
+  if (state.lives <= 0) setTimeout(() => endGame(false), 1200);
+  else setTimeout(nextQuestion, 1200);
+}
+
+function nextQuestion(){
+  state.qIndex++;
+  if (state.qIndex >= TOTAL_Q){ endGame(true); return; }
+  renderQuestion();
+}
+
+function updateHUD(){
+  document.getElementById('hudScore').textContent = state.score;
+  document.getElementById('hudLives').textContent =
+    '❤️'.repeat(Math.max(0,state.lives)) + '🖤'.repeat(Math.max(0,3-state.lives));
+  document.getElementById('hudStreak').textContent = state.streak;
+  document.getElementById('hudProgress').textContent = (state.qIndex + 1) + '/' + TOTAL_Q;
+}
+
+/* ===== КОНЕЦ ===== */
+function endGame(win){
+  clearInterval(state.timerId);
+  const correct = state.results.filter(r => r.ok).length;
+  const accuracy = Math.round(correct / TOTAL_Q * 100);
+  let rank, emoji;
+  if (state.score >= 3400){ rank = 'Мастер ОГЭ'; emoji = '👑'; }
+  else if (state.score >= 2200){ rank = 'Знаток'; emoji = '🏆'; }
+  else if (state.score >= 1200){ rank = 'Уверенный'; emoji = '🎯'; }
+  else { rank = 'Новичок'; emoji = '🌱'; }
+
+  const badges = [];
+  if (state.bestStreak >= 5) badges.push('🔥 Серия ' + state.bestStreak);
+  if (state.lives === 3) badges.push('💎 Без потерь');
+  if (accuracy === 100) badges.push('🧠 Идеально');
+  if (state.fastAnswers >= 5) badges.push('⚡ Скорость');
+  if (win) badges.push('🏁 Финишёр');
+
+  const qs = QUESTIONS[state.variant];
+  let review = '';
+  qs.forEach((q, i) => {
+    const r = state.results.find(x => x.q === i);
+    const status = !r ? '⬜' : (r.ok ? '✅' : '❌');
+    const cls = !r ? '' : (r.ok ? 'ok' : 'bad');
+    const ans = q.type === 'choice' ? q.opts[q.a] : q.a;
+    review +=
+      '<div class="review-item ' + cls + '">' +
+        '<div class="ri-head"><span>' + status + '</span>' +
+          '<span class="ri-num">Задание ' + (i+1) + '</span>' +
+          '<span>' + q.topic + '</span></div>' +
+        '<div class="ri-q">' + escapeHtml(q.q) + '</div>' +
+        '<div class="ri-a">Правильный ответ: <b>' + escapeHtml(ans) + '</b></div>' +
+        '<div class="ri-sol">' + escapeHtml(q.sol) + '</div>' +
+      '</div>';
+  });
+
+  const screen = document.getElementById('resultScreen');
+  screen.innerHTML =
+    '<div class="result-hero">' +
+      '<span class="result-emoji">' + emoji + '</span>' +
+      '<h2 class="result-rank">' + rank + '</h2>' +
+      '<div class="result-score">' + state.score + '</div>' +
+      '<div style="color:var(--muted);font-size:14px">' + (win ? 'Мир пройден!' : 'Жизни закончились') + '</div>' +
+    '</div>' +
+    '<div class="stat-grid">' +
+      '<div class="stat"><span class="stat-v">' + correct + '/' + TOTAL_Q + '</span><span class="stat-l">Верно</span></div>' +
+      '<div class="stat"><span class="stat-v">' + accuracy + '%</span><span class="stat-l">Точность</span></div>' +
+      '<div class="stat"><span class="stat-v">' + state.bestStreak + '</span><span class="stat-l">Серия</span></div>' +
+    '</div>' +
+    (badges.length ? '<div class="badges">' + badges.map(b => '<span class="badge">' + b + '</span>').join('') + '</div>' : '') +
+    '<div class="result-actions">' +
+      '<button class="btn primary" id="btnAgain">Играть снова</button>' +
+      '<button class="btn ghost" id="btnMenu">Другой мир</button>' +
+    '</div>' +
+    '<h3 class="review-title">Разбор всех 16 заданий</h3>' + review;
+
+  showScreen('resultScreen');
+  document.getElementById('btnAgain').onclick = () => startGame(state.variant);
+  document.getElementById('btnMenu').onclick = () => { sfxClick(); showScreen('startScreen'); };
+
+  if (win){ sfxWin(); confetti(90); } else sfxLose();
+}
+
+function escapeHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ===== ИНИЦИАЛИЗАЦИЯ ===== */
+document.querySelectorAll('.theme-card').forEach(card => {
+  card.addEventListener('click', () => startGame(Number(card.dataset.v)));
+});
+</script>
+<a href="index.html" class="button-link">📚 Вернуться к основному тренажёру</a>
+</body>
+</html>
