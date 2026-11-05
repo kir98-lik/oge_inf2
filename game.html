@@ -5,36 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ОГЭ-Квест — тренажёр по информатике</title>
 <style>
-        /* Кнопка возврата к тренажёру */
-    .back-btn {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #e52521; /* Красный цвет Марио */
-        color: #fff;
-        text-decoration: none;
-        padding: 12px 24px;
-        font-size: 12px;
-        border: 4px solid #fff;
-        border-radius: 8px;
-        box-shadow: 0 6px 0 #8b0000;
-        font-family: 'Press Start 2P', monospace;
-        z-index: 999; /* Поверх всех окон */
-        transition: transform 0.1s, box-shadow 0.1s;
-        text-align: center;
-        white-space: nowrap;
-    }
-    .back-btn:hover {
-        transform: translateX(-50%) translateY(-2px);
-    }
-    .back-btn:active {
-        transform: translateX(-50%) translateY(6px);
-        box-shadow: none;
-    }
-    @media(max-width: 600px) {
-        .back-btn { font-size: 10px; padding: 10px 15px; bottom: 10px; }
-    }
+    /* ВАЖНО: @import должен быть самым первым в блоке style */
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
     :root {
@@ -136,6 +107,30 @@
     .media-link-btn:active { transform: translateY(4px); box-shadow: none; }
 
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* Кнопка возврата к тренажёру */
+    .back-btn {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #e52521;
+        color: #fff;
+        text-decoration: none;
+        padding: 12px 24px;
+        font-size: 12px;
+        border: 4px solid #fff;
+        border-radius: 8px;
+        box-shadow: 0 6px 0 #8b0000;
+        font-family: 'Press Start 2P', monospace;
+        z-index: 999;
+        transition: transform 0.1s, box-shadow 0.1s;
+        text-align: center;
+        white-space: nowrap;
+    }
+    .back-btn:hover { transform: translateX(-50%) translateY(-2px); }
+    .back-btn:active { transform: translateX(-50%) translateY(6px); box-shadow: none; }
+    @media(max-width: 600px) { .back-btn { font-size: 10px; padding: 10px 15px; bottom: 10px; } }
 </style>
 </head>
 <body class="theme-space">
@@ -191,13 +186,15 @@
 /* =========================================================
    НАСТРОЙКИ МЕДИА-БОНУСОВ
    ========================================================= */
+// Внимание: для ВКонтакте ссылки должны быть формата embed (video_ext.php), 
+// иначе они могут не открываться в iframe!
 const MEDIA_REWARDS = [
-    { type: 'video', url: 'https://vkvideo.ru/video-228364761_456239244', title: 'МУЗЫКАЛЬНАЯ ПАУЗА', text: 'Отвлекись на минутку и подпевай!' },
-    { type: 'video', url: 'https://vkvideo.ru/video-175112007_456243343', title: 'Lofi для учёбы', text: 'Расслабься под спокойную музыку.' },
+    { type: 'link', url: 'https://vkvideo.ru/video-228364761_456239244', title: 'МУЗЫКАЛЬНАЯ ПАУЗА', text: 'Отвлекись на минутку и подпевай!', btnText: 'Смотреть видео' },
+    { type: 'link', url: 'https://vkvideo.ru/video-175112007_456243343', title: 'Lofi для учёбы', text: 'Расслабься под спокойную музыку.', btnText: 'Смотреть видео' },
     { type: 'link', url: 'https://yablyk.com/972197-75-interesnyx-faktov-ob-it-texnologiyax/?ysclid=mw3nhcrt53641450355', title: 'БОНУСНАЯ ССЫЛКА', text: 'Узнай что-то новое про IT!', btnText: 'Открыть факты' },
     { type: 'link', url: 'https://ru.pinterest.com/ideas/милые-фотки-котиков/914111053343/', title: 'ПОРЦИЯ МИЛОТЫ', text: 'Посмотри на котиков, чтобы снять стресс.', btnText: 'Смотреть котиков' },
-         { type: 'video', url: 'https://vkvideo.ru/video-227389555_456240767', title: 'МУЗЫКАЛЬНАЯ ПАУЗА', text: 'улыбнись!'},
-         { type: 'video', url: 'https://vkvideo.ru/video-116325317_456239021', title: 'МУЗЫКАЛЬНАЯ ПАУЗА', text: 'Отвлекись и не пугайся!' },
+    { type: 'link', url: 'https://vkvideo.ru/video-227389555_456240767', title: 'МУЗЫКАЛЬНАЯ ПАУЗА', text: 'улыбнись!', btnText: 'Смотреть видео' },
+    { type: 'link', url: 'https://vkvideo.ru/video-116325317_456239021', title: 'МУЗЫКАЛЬНАЯ ПАУЗА', text: 'Отвлекись и не пугайся!', btnText: 'Смотреть видео' },
 ];
 
 /* =========================================================
@@ -230,19 +227,17 @@ const PENALTY_QUESTIONS = [
     { q: "Слово «Тест» в 16-битной кодировке.\nСколько байт?", opts: ["4", "8", "12", "16"], a: 1 }
 ];
 
-// Переменная для хранения текущей колоды штрафных вопросов
 let penaltyPool = [];
 
 function initPenaltyPool() {
-    // Перемешиваем копию массива
     penaltyPool = [...PENALTY_QUESTIONS].sort(() => Math.random() - 0.5);
 }
 
 function getNextPenaltyQuestion() {
     if (penaltyPool.length === 0) {
-        initPenaltyPool(); // Если колода пуста, заполняем заново
+        initPenaltyPool();
     }
-    return penaltyPool.pop(); // Берем последний (и удаляем из колоды)
+    return penaltyPool.pop();
 }
 
 /* =========================================================
@@ -257,20 +252,33 @@ const LEVELS = [
 ];
 
 /* =========================================================
-   ЗВУКИ
+   ЗВУКИ (ИСПРАВЛЕНО: добавлен try-catch)
    ========================================================= */
 let audioCtx = null;
-function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+function initAudio() { 
+    if (!audioCtx) {
+        try {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+            console.warn("Аудио заблокировано или не поддерживается браузером.");
+        }
+    }
+}
+
 function playSound(type) {
     if (!audioCtx) return;
-    const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    const now = audioCtx.currentTime;
-    if (type === 'coin') { osc.type='square'; osc.frequency.setValueAtTime(987.77,now); osc.frequency.setValueAtTime(1318.51,now+0.1); gain.gain.setValueAtTime(0.1,now); gain.gain.exponentialRampToValueAtTime(0.01,now+0.4); osc.start(now); osc.stop(now+0.4); }
-    else if (type === 'die') { osc.type='sawtooth'; osc.frequency.setValueAtTime(300,now); osc.frequency.exponentialRampToValueAtTime(50,now+0.8); gain.gain.setValueAtTime(0.1,now); gain.gain.exponentialRampToValueAtTime(0.01,now+0.8); osc.start(now); osc.stop(now+0.8); }
-    else if (type === 'bump') { osc.type='square'; osc.frequency.setValueAtTime(150,now); osc.frequency.exponentialRampToValueAtTime(80,now+0.2); gain.gain.setValueAtTime(0.1,now); gain.gain.exponentialRampToValueAtTime(0.01,now+0.2); osc.start(now); osc.stop(now+0.2); }
-    else if (type === 'powerup') { osc.type='triangle'; osc.frequency.setValueAtTime(440,now); osc.frequency.linearRampToValueAtTime(880,now+0.2); osc.frequency.linearRampToValueAtTime(1760,now+0.4); gain.gain.setValueAtTime(0.1,now); gain.gain.linearRampToValueAtTime(0.01,now+0.5); osc.start(now); osc.stop(now+0.5); }
-    else if (type === 'shuffle') { osc.type='sine'; osc.frequency.setValueAtTime(400,now); osc.frequency.exponentialRampToValueAtTime(800,now+0.1); osc.frequency.exponentialRampToValueAtTime(400,now+0.2); gain.gain.setValueAtTime(0.1,now); gain.gain.exponentialRampToValueAtTime(0.01,now+0.3); osc.start(now); osc.stop(now+0.3); }
+    try {
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
+        if (type === 'coin') { osc.type='square'; osc.frequency.setValueAtTime(987.77,now); osc.frequency.setValueAtTime(1318.51,now+0.1); gain.gain.setValueAtTime(0.1,now); gain.gain.exponentialRampToValueAtTime(0.01,now+0.4); osc.start(now); osc.stop(now+0.4); }
+        else if (type === 'die') { osc.type='sawtooth'; osc.frequency.setValueAtTime(300,now); osc.frequency.exponentialRampToValueAtTime(50,now+0.8); gain.gain.setValueAtTime(0.1,now); gain.gain.exponentialRampToValueAtTime(0.01,now+0.8); osc.start(now); osc.stop(now+0.8); }
+        else if (type === 'bump') { osc.type='square'; osc.frequency.setValueAtTime(150,now); osc.frequency.exponentialRampToValueAtTime(80,now+0.2); gain.gain.setValueAtTime(0.1,now); gain.gain.exponentialRampToValueAtTime(0.01,now+0.2); osc.start(now); osc.stop(now+0.2); }
+        else if (type === 'powerup') { osc.type='triangle'; osc.frequency.setValueAtTime(440,now); osc.frequency.linearRampToValueAtTime(880,now+0.2); osc.frequency.linearRampToValueAtTime(1760,now+0.4); gain.gain.setValueAtTime(0.1,now); gain.gain.linearRampToValueAtTime(0.01,now+0.5); osc.start(now); osc.stop(now+0.5); }
+        else if (type === 'shuffle') { osc.type='sine'; osc.frequency.setValueAtTime(400,now); osc.frequency.exponentialRampToValueAtTime(800,now+0.1); osc.frequency.exponentialRampToValueAtTime(400,now+0.2); gain.gain.setValueAtTime(0.1,now); gain.gain.exponentialRampToValueAtTime(0.01,now+0.3); osc.start(now); osc.stop(now+0.3); }
+    } catch(e) {
+        console.warn("Ошибка воспроизведения звука");
+    }
 }
 
 /* =========================================================
@@ -280,7 +288,7 @@ const state = {
     levelIdx: 0, qIdx: 0, score: 0, lives: 3, isPenalty: false, locked: false, 
     marioX: 50, marioY: 0, marioVY: 0, isJumping: false, targetX: null,
     timeLeft: 480,
-    currentPenaltyTask: null // Храним текущее штрафное задание
+    currentPenaltyTask: null
 };
 
 const elements = {
@@ -403,7 +411,7 @@ function moveToBlock(index) { if (state.locked) return; const block = document.q
    ========================================================= */
 function startGame(levelIdx) {
     initAudio(); 
-    initPenaltyPool(); // Инициализируем/перемешиваем колоду штрафов при старте
+    initPenaltyPool();
     
     state.levelIdx = levelIdx; state.qIdx = 0; state.score = 0; state.lives = 3; state.isPenalty = false;
     document.body.className = LEVELS[levelIdx].theme;
@@ -420,7 +428,6 @@ function loadQuestion() {
     if (state.qIdx >= 16) { endGame(true); return; }
     state.locked = false; state.marioX = 50; state.marioY = 0; state.marioVY = 0; state.isJumping = false; state.targetX = null;
     
-    // Если это штраф, берем задание из state.currentPenaltyTask, иначе из текущего уровня
     const qData = state.isPenalty ? state.currentPenaltyTask : LEVELS[state.levelIdx].questions[state.qIdx];
     
     elements.question.textContent = (state.isPenalty ? "[ШТРАФ] " : "") + qData.q;
@@ -533,7 +540,6 @@ function showReward() {
 
 function handlePenalty() {
     if (state.isPenalty) { 
-        // Если провалили ШТРАФНОЕ задание — игра окончена
         gameOver(); 
         return; 
     }
@@ -543,7 +549,6 @@ function handlePenalty() {
         gameOver(); 
     } 
     else {
-        // 80% шанс: достаем УНИКАЛЬНОЕ штрафное задание
         state.currentPenaltyTask = getNextPenaltyQuestion();
         
         elements.modal.classList.add('active');
@@ -602,7 +607,9 @@ function endGame(win) {
     }
 }
 </script>
-    <!-- Кнопка возврата -->
-    <a href="index.html" class="back-btn">↩ ВЕРНУТЬСЯ К ТРЕНАЖЕРУ</a>
+
+<!-- Кнопка возврата -->
+<a href="index.html" class="back-btn">↩ ВЕРНУТЬСЯ К ТРЕНАЖЕРУ</a>
+
 </body>
 </html>
