@@ -5,673 +5,570 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ОГЭ-Квест — тренажёр по информатике</title>
 <style>
-    .button-link {
-    display: inline-block;
-    padding: 10px 20px;
-    background: #4f6ef7;
-    color: white;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: bold;
-    margin: 10px;
-}
-.button-link:hover {
-    background: #3d5be0;
-}
-  *{box-sizing:border-box}
-  body{
-    margin:0; font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;
-    min-height:100vh; overflow-x:hidden;
-    background:var(--bg); color:var(--text);
-    transition:background .5s ease;
-    --bg:#0b1020; --panel:#151c33; --panel2:#1c2444;
-    --text:#e8ecf8; --muted:#8b96b8;
-    --accent:#6c8cff; --accent2:#a06bff;
-    --good:#2dd4a7; --bad:#ff5c6c; --gold:#ffc94d;
-    --border:rgba(255,255,255,.1);
-  }
-  body[data-theme="jungle"]{ --bg:#07130f; --panel:#0f201a; --panel2:#16302a; --accent:#2dd4a7; --accent2:#7ee787; }
-  body[data-theme="cyber"]{ --bg:#0a0714; --panel:#170f26; --panel2:#221536; --accent:#ff4dd2; --accent2:#4df0ff; }
-  body[data-theme="ocean"]{ --bg:#051524; --panel:#0a2238; --panel2:#0e2d47; --accent:#22b8cf; --accent2:#7be3ff; }
-  body[data-theme="volcano"]{ --bg:#1a0805; --panel:#2b0e06; --panel2:#3d150a; --accent:#ff7a3d; --accent2:#ffc94d; }
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-  body::before{
-    content:''; position:fixed; inset:0; z-index:-1; pointer-events:none;
-    background:
-      radial-gradient(circle at 15% 15%, rgba(108,140,255,.16), transparent 45%),
-      radial-gradient(circle at 85% 85%, rgba(160,107,255,.16), transparent 45%);
-    transition:background .5s ease;
-  }
-  body[data-theme="jungle"]::before{
-    background:
-      radial-gradient(circle at 15% 15%, rgba(45,212,167,.16), transparent 45%),
-      radial-gradient(circle at 85% 85%, rgba(126,231,135,.14), transparent 45%);
-  }
-  body[data-theme="cyber"]::before{
-    background:
-      radial-gradient(circle at 15% 15%, rgba(255,77,210,.16), transparent 45%),
-      radial-gradient(circle at 85% 85%, rgba(77,240,255,.14), transparent 45%);
-  }
-  body[data-theme="ocean"]::before{
-    background:
-      radial-gradient(circle at 15% 15%, rgba(34,184,207,.18), transparent 45%),
-      radial-gradient(circle at 85% 85%, rgba(123,227,255,.14), transparent 45%);
-  }
-  body[data-theme="volcano"]::before{
-    background:
-      radial-gradient(circle at 15% 15%, rgba(255,122,61,.18), transparent 45%),
-      radial-gradient(circle at 85% 85%, rgba(255,201,77,.14), transparent 45%);
-  }
+    :root {
+        --bg-color: #5c94fc;
+        --block-color: #e52521;
+        --block-border: #8b0000;
+        --pipe-color: #43b047;
+        --pipe-border: #1b5e20;
+        --text-color: #fff;
+    }
 
-  .topbar{display:flex; align-items:center; justify-content:space-between; padding:18px 22px; max-width:880px; margin:0 auto;}
-  .brand{font-size:19px; font-weight:800; letter-spacing:-.3px}
-  .variant-badge{
-    font-size:13px; font-weight:700; padding:7px 16px; border-radius:999px;
-    background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff;
-    box-shadow:0 6px 18px rgba(0,0,0,.35);
-  }
+    body.theme-jungle { --bg-color: #1b3a2a; --block-color: #8b5a2b; --block-border: #4a3015; --pipe-color: #2d6a4f; --pipe-border: #1b4332; }
+    body.theme-cyber { --bg-color: #0a0714; --block-color: #ff4dd2; --block-border: #8a0066; --pipe-color: #4df0ff; --pipe-border: #007a8a; }
+    body.theme-ocean { --bg-color: #051524; --block-color: #22b8cf; --block-border: #0b5b6b; --pipe-color: #7be3ff; --pipe-border: #2b8ca3; }
+    body.theme-volcano { --bg-color: #1a0805; --block-color: #ff7a3d; --block-border: #993d15; --pipe-color: #ffc94d; --pipe-border: #997400; }
 
-  main{max-width:880px; margin:0 auto; padding:0 18px 70px}
+    * { box-sizing: border-box; user-select: none; }
 
-  .screen{display:none; animation:fadeIn .35s ease}
-  .screen.active{display:block}
-  @keyframes fadeIn{from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:none}}
+    body {
+        margin: 0; padding: 0;
+        background-color: var(--bg-color);
+        font-family: 'Press Start 2P', monospace;
+        color: var(--text-color);
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: background-color 0.5s;
+    }
 
-  .hero-title{font-size:30px; line-height:1.2; margin:18px 0 8px; letter-spacing:-.6px}
-  .hero-sub{color:var(--muted); margin:0 0 28px; font-size:15px}
+    /* Облака */
+    .cloud { position: absolute; background: #fff; width: 100px; height: 40px; border-radius: 20px; opacity: 0.8; animation: float 20s linear infinite; z-index: 0; }
+    .cloud::before, .cloud::after { content: ''; position: absolute; background: #fff; border-radius: 50%; }
+    .cloud::before { width: 50px; height: 50px; top: -20px; left: 15px; }
+    .cloud::after { width: 70px; height: 70px; top: -30px; left: 45px; }
+    .c1 { top: 10%; left: -20%; animation-duration: 25s; }
+    .c2 { top: 30%; left: -40%; animation-duration: 35s; }
+    .c3 { top: 50%; left: -10%; animation-duration: 28s; }
+    @keyframes float { from { transform: translateX(-100px); } to { transform: translateX(100vw); } }
 
-  .theme-grid{display:grid; gap:12px; grid-template-columns:1fr}
-  @media(min-width:520px){ .theme-grid{grid-template-columns:repeat(auto-fit, minmax(145px, 1fr))} }
+    /* Главное меню */
+    #main-menu { position: relative; z-index: 10; text-align: center; background: rgba(0,0,0,0.85); padding: 40px; border: 4px solid #fff; border-radius: 12px; max-width: 800px; width: 90%; box-shadow: 0 10px 0 rgba(0,0,0,0.5); }
+    h1 { font-size: 24px; color: #ffd700; text-shadow: 4px 4px 0 #e52521; margin-bottom: 10px; line-height: 1.4; }
+    .subtitle { font-size: 10px; color: #ccc; margin-bottom: 30px; }
+    
+    .levels-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    @media(max-width: 600px) { .levels-grid { grid-template-columns: 1fr; } }
 
-  .theme-card{
-    background:var(--panel); border:2px solid var(--border);
-    border-radius:16px; padding:18px 12px; cursor:pointer;
-    color:var(--text); font-family:inherit; text-align:left;
-    transition:.2s; position:relative; overflow:hidden;
-  }
-  .theme-card:hover{transform:translateY(-4px); border-color:var(--accent); box-shadow:0 14px 32px rgba(0,0,0,.4)}
-  .theme-card::after{
-    content:''; position:absolute; inset:0; opacity:0; transition:.2s;
-    background:linear-gradient(135deg,var(--accent),var(--accent2));
-  }
-  .theme-card:hover::after{opacity:.08}
-  .tc-emoji{font-size:26px; margin-bottom:8px; display:block}
-  .tc-title{font-size:14px; font-weight:800; margin-bottom:2px}
-  .tc-desc{font-size:11px; color:var(--muted)}
+    .level-btn { background: var(--block-color); color: #fff; border: 4px solid #fff; padding: 15px; font-family: inherit; font-size: 12px; cursor: pointer; border-radius: 8px; box-shadow: 0 6px 0 var(--block-border); transition: transform 0.1s, box-shadow 0.1s; text-align: left; }
+    .level-btn:hover { transform: translateY(-2px); }
+    .level-btn:active { transform: translateY(6px); box-shadow: 0 0 0 var(--block-border); }
+    .level-btn small { display: block; font-size: 8px; margin-top: 8px; color: #ffd700; }
 
-  .hud{
-    display:grid; grid-template-columns:repeat(4,1fr); gap:8px;
-    background:var(--panel); border:1px solid var(--border);
-    border-radius:18px; padding:14px 10px; margin-bottom:10px;
-  }
-  .hud-item{text-align:center}
-  .hud-label{display:block; font-size:11px; text-transform:uppercase; letter-spacing:.6px; color:var(--muted); margin-bottom:4px}
-  .hud-value{font-size:17px; font-weight:800; font-variant-numeric:tabular-nums}
-  .hud-value.lives{letter-spacing:-2px; font-size:15px}
+    /* Игровой экран */
+    #game-screen { display: none; width: 100%; height: 100%; position: relative; z-index: 10; flex-direction: column; }
+    
+    .hud { display: flex; justify-content: space-between; padding: 15px 20px; background: #000; border-bottom: 4px solid #fff; font-size: 10px; z-index: 20; flex-wrap: wrap; gap: 10px; }
+    .hud span { color: #ffd700; }
+    .hud .timer { color: #ff8c00; }
 
-  .timer-track{height:8px; background:var(--panel2); border-radius:999px; overflow:hidden; margin-bottom:18px}
-  .timer-fill{height:100%; width:100%; border-radius:999px;
-    background:linear-gradient(90deg,var(--good),var(--accent));
-    transition:width .1s linear, background .3s}
-  .timer-fill.low{background:linear-gradient(90deg,#ffb347,var(--bad))}
+    .question-container { margin: 20px auto; background: #fff; color: #000; padding: 20px; border: 4px solid #000; border-radius: 8px; width: 90%; max-width: 800px; font-size: 12px; line-height: 1.6; text-align: center; box-shadow: inset -4px -4px 0 #ccc; white-space: pre-wrap; z-index: 20; transition: background 0.3s; }
 
-  .q-card{background:var(--panel); border:1px solid var(--border); border-radius:22px; padding:26px 24px 24px; position:relative}
-  .q-card.flash-good{animation:flashGood .5s ease}
-  .q-card.flash-bad{animation:flashBad .5s ease}
-  @keyframes flashGood{0%,100%{box-shadow:0 0 0 0 rgba(45,212,167,0)}40%{box-shadow:0 0 0 4px rgba(45,212,167,.5)}}
-  @keyframes flashBad{0%,100%{box-shadow:0 0 0 0 rgba(255,92,108,0)}40%{box-shadow:0 0 0 4px rgba(255,92,108,.5)}}
-  .q-card.shake{animation:shake .35s}
-  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+    /* Игровое поле (Платформер) */
+    .play-area { flex: 1; position: relative; overflow: hidden; border-bottom: 8px solid #c84c0c; background: rgba(0,0,0,0.2); }
+    .block-row { position: absolute; bottom: 180px; width: 100%; display: flex; justify-content: center; gap: 40px; }
+    .block-row.shake { animation: rowShake 0.5s ease; }
 
-  .q-topic{
-    display:inline-block; font-size:11px; font-weight:800; letter-spacing:.7px;
-    text-transform:uppercase; color:var(--accent);
-    background:rgba(108,140,255,.12); padding:5px 12px; border-radius:999px; margin-bottom:14px;
-  }
-  body[data-theme="jungle"] .q-topic{background:rgba(45,212,167,.12)}
-  body[data-theme="cyber"] .q-topic{background:rgba(255,77,210,.12)}
-  body[data-theme="ocean"] .q-topic{background:rgba(34,184,207,.12)}
-  body[data-theme="volcano"] .q-topic{background:rgba(255,122,61,.12)}
+    @keyframes rowShake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-10px); }
+        75% { transform: translateX(10px); }
+    }
 
-  .q-text{font-size:16px; line-height:1.6; margin-bottom:20px; white-space:pre-line}
+    .q-block { width: 80px; height: 80px; background: var(--block-color); border: 4px solid #fff; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 10px; text-align: center; color: #fff; cursor: pointer; box-shadow: inset -6px -6px 0 rgba(0,0,0,0.3), 0 6px 0 var(--block-border); transition: transform 0.1s; padding: 5px; word-break: break-all; position: relative; }
+    .q-block::before { content: '❓'; position: absolute; font-size: 20px; opacity: 0.3; }
+    .q-block span { position: relative; z-index: 2; font-weight: bold; }
 
-  .options{display:grid; gap:10px}
-  .opt{
-    display:block; width:100%; text-align:left;
-    background:var(--panel2); border:2px solid var(--border);
-    color:var(--text); border-radius:14px; padding:15px 18px;
-    font-size:16px; font-family:inherit; cursor:pointer; transition:.15s;
-  }
-  .opt:hover:not(:disabled){border-color:var(--accent); transform:translateX(5px)}
-  .opt:disabled{cursor:default; opacity:.75}
-  .opt.correct{border-color:var(--good); background:rgba(45,212,167,.16); opacity:1}
-  .opt.wrong{border-color:var(--bad); background:rgba(255,92,108,.16); opacity:1}
+    .mario { position: absolute; bottom: 0; left: 50px; width: 50px; height: 50px; font-size: 50px; display: flex; justify-content: center; align-items: flex-end; z-index: 10; }
 
-  .input-row{display:flex; gap:10px; flex-wrap:wrap}
-  .game-input{
-    flex:1; min-width:180px;
-    background:var(--panel2); border:2px solid var(--border); color:var(--text);
-    border-radius:14px; padding:15px 18px; font-size:16px;
-    font-family:inherit; outline:none; transition:.15s;
-  }
-  .game-input:focus{border-color:var(--accent); box-shadow:0 0 0 4px rgba(108,140,255,.13)}
-  .game-input:disabled{opacity:.6}
+    /* Модальные окна */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 100; padding: 20px; }
+    .modal-overlay.active { display: flex; animation: fadeIn 0.3s; }
+    
+    .modal-content { background: #fff; color: #000; border: 6px solid #000; border-radius: 12px; padding: 30px; max-width: 600px; width: 100%; text-align: center; box-shadow: 10px 10px 0 rgba(0,0,0,0.5); }
+    .modal-content h2 { font-size: 16px; color: #e52521; margin-top: 0; line-height: 1.4; }
+    .modal-content p { font-size: 10px; line-height: 1.6; margin-bottom: 20px; }
+    .modal-content .emoji-big { font-size: 60px; display: block; margin: 20px 0; }
+    
+    .continue-btn { background: #5c94fc; color: #fff; border: 4px solid #000; padding: 12px 24px; font-family: inherit; font-size: 12px; cursor: pointer; border-radius: 6px; box-shadow: 0 4px 0 #000; }
+    .continue-btn:active { transform: translateY(4px); box-shadow: none; }
 
-  .btn{border:none; border-radius:14px; padding:15px 26px; font-size:16px; font-weight:800; cursor:pointer; font-family:inherit; transition:.15s; white-space:nowrap;}
-  .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; box-shadow:0 8px 24px rgba(0,0,0,.4);}
-  .btn.primary:hover{transform:translateY(-2px); box-shadow:0 12px 28px rgba(0,0,0,.5)}
-  .btn.ghost{background:transparent; border:2px solid var(--border); color:var(--text)}
-  .btn.ghost:hover{border-color:var(--accent); color:var(--accent)}
+    /* Контейнер для видео и ссылок */
+    #modalMedia { display: none; margin: 20px 0; }
+    #modalMedia.active { display: block; animation: fadeIn 0.5s; }
+    #modalMedia iframe { width: 100%; aspect-ratio: 16/9; border: 4px solid #000; border-radius: 8px; }
+    
+    .media-link-btn { display: inline-block; background: #ff8c00; color: #fff; text-decoration: none; padding: 15px 30px; border: 4px solid #000; border-radius: 8px; font-size: 12px; font-weight: bold; box-shadow: 0 4px 0 #993d15; transition: transform 0.1s; }
+    .media-link-btn:active { transform: translateY(4px); box-shadow: none; }
 
-  .q-feedback{margin-top:18px; font-size:15px; font-weight:700; display:none}
-  .q-feedback.show{display:block; animation:pop .25s ease}
-  .q-feedback.ok{color:var(--good)}
-  .q-feedback.bad{color:var(--bad)}
-  @keyframes pop{from{opacity:0; transform:scale(.94)} to{opacity:1; transform:scale(1)}}
-
-  .result-hero{text-align:center; padding:20px 0 10px}
-  .result-emoji{font-size:56px; display:block; margin-bottom:10px; animation:bounceIn .6s ease}
-  @keyframes bounceIn{0%{transform:scale(.3); opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1); opacity:1}}
-  .result-rank{font-size:26px; font-weight:800; margin:0 0 6px; letter-spacing:-.5px}
-  .result-score{font-size:44px; font-weight:900; color:var(--gold);
-    font-variant-numeric:tabular-nums; letter-spacing:-1.5px;
-    text-shadow:0 4px 20px rgba(255,201,77,.3); margin:6px 0}
-
-  .stat-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:22px 0}
-  .stat{background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:14px 10px; text-align:center}
-  .stat-v{font-size:20px; font-weight:800; display:block}
-  .stat-l{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px}
-
-  .badges{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:6px 0 26px}
-  .badge{background:var(--panel); border:1px solid var(--border); border-radius:999px; padding:8px 16px; font-size:13px; font-weight:700;}
-
-  .review-title{font-size:17px; font-weight:800; margin:26px 0 12px}
-  .review-item{
-    background:var(--panel); border:1px solid var(--border);
-    border-left:4px solid var(--border); border-radius:14px;
-    padding:16px 18px; margin-bottom:10px; font-size:14px;
-  }
-  .review-item.ok{border-left-color:var(--good)}
-  .review-item.bad{border-left-color:var(--bad)}
-  .ri-head{display:flex; gap:10px; align-items:center; font-size:12px; color:var(--muted); margin-bottom:8px; flex-wrap:wrap}
-  .ri-num{font-weight:800; color:var(--text)}
-  .ri-q{white-space:pre-line; margin-bottom:10px; line-height:1.5}
-  .ri-a{font-weight:700; margin-bottom:6px}
-  .ri-a b{color:var(--good)}
-  .ri-sol{color:var(--muted); font-size:13px; white-space:pre-line; line-height:1.5}
-
-  .result-actions{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:28px}
-
-  .confetti{position:fixed; top:-12px; width:9px; height:14px; border-radius:2px; z-index:999; pointer-events:none; animation:fall linear forwards;}
-  @keyframes fall{to{transform:translateY(105vh) rotate(720deg); opacity:.05}}
-
-  .float-pts{
-    position:fixed; top:32%; font-size:34px; font-weight:900; color:var(--gold);
-    z-index:998; pointer-events:none; text-shadow:0 3px 16px rgba(0,0,0,.7);
-    animation:floatUp 1.2s ease-out forwards;
-  }
-  @keyframes floatUp{
-    0%{opacity:0; transform:translateY(0) scale(.6)}
-    20%{opacity:1; transform:translateY(-10px) scale(1.15)}
-    100%{opacity:0; transform:translateY(-100px) scale(1)}
-  }
-
-  @media(max-width:520px){
-    .hero-title{font-size:23px}
-    .q-text{font-size:15px}
-    .q-card{padding:20px 16px}
-    .result-score{font-size:36px}
-  }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 </style>
 </head>
-<body data-theme="space">
+<body class="theme-space">
 
-<div class="topbar">
-  <div class="brand">🎮 ОГЭ-Квест</div>
-  <div class="variant-badge" id="variantBadge">Космос</div>
-</div>
+    <div class="cloud c1"></div>
+    <div class="cloud c2"></div>
+    <div class="cloud c3"></div>
 
-<main>
-
-  <section id="startScreen" class="screen active">
-    <h1 class="hero-title">Выбери мир — и в бой</h1>
-    <p class="hero-sub">16 заданий · 3 жизни · бонус за скорость и серию верных ответов</p>
-
-    <div class="theme-grid">
-      <button class="theme-card" data-v="1"><span class="tc-emoji">🚀</span><div class="tc-title">Космос</div><div class="tc-desc">Базовый</div></button>
-      <button class="theme-card" data-v="2"><span class="tc-emoji">🌿</span><div class="tc-title">Джунгли</div><div class="tc-desc">Средний</div></button>
-      <button class="theme-card" data-v="3"><span class="tc-emoji">⚡</span><div class="tc-title">Киберпанк</div><div class="tc-desc">Продвинутый</div></button>
-      <button class="theme-card" data-v="4"><span class="tc-emoji">🌊</span><div class="tc-title">Океан</div><div class="tc-desc">Средний+</div></button>
-      <button class="theme-card" data-v="5"><span class="tc-emoji">🌋</span><div class="tc-title">Вулкан</div><div class="tc-desc">Сложный</div></button>
+    <!-- ГЛАВНОЕ МЕНЮ -->
+    <div id="main-menu">
+        <h1>ИНФОРМАТИКА-МАРИО</h1>
+        <div class="subtitle">Выбери уровень сложности. 16 заданий. Прыгай на блоки, чтобы ответить!</div>
+        <div class="levels-grid">
+            <button class="level-btn" onclick="startGame(0)">🍄 МИР 1: КОСМОС <small>Базовый</small></button>
+            <button class="level-btn" onclick="startGame(1)">🌿 МИР 2: ДЖУНГЛИ <small>Средний</small></button>
+            <button class="level-btn" onclick="startGame(2)">⚡ МИР 3: КИБЕРПАНК <small>Сложный</small></button>
+            <button class="level-btn" onclick="startGame(3)">🌊 МИР 4: ОКЕАН <small>ОГЭ-уровень</small></button>
+            <button class="level-btn" onclick="startGame(4)">🌋 МИР 5: ВУЛКАН <small>Хардкор</small></button>
+        </div>
+        <div class="subtitle" style="margin-top: 20px;">
+            Управление: ⬅️ ➡️ двигаться, ⬆️ или ПРОБЕЛ прыгать.<br>Или просто кликни на нужный блок!
+        </div>
     </div>
-  </section>
 
-  <section id="gameScreen" class="screen">
-    <div class="hud">
-      <div class="hud-item"><span class="hud-label">Очки</span><span class="hud-value" id="hudScore">0</span></div>
-      <div class="hud-item"><span class="hud-label">Жизни</span><span class="hud-value lives" id="hudLives">❤️❤️❤️</span></div>
-      <div class="hud-item"><span class="hud-label">Серия</span><span class="hud-value" id="hudStreak">0</span></div>
-      <div class="hud-item"><span class="hud-label">Вопрос</span><span class="hud-value" id="hudProgress">1/16</span></div>
+    <!-- ИГРОВОЙ ЭКРАН -->
+    <div id="game-screen">
+        <div class="hud">
+            <div>МОНЕТЫ: <span id="scoreDisplay">0</span></div>
+            <div>МИР: <span id="levelDisplay">1</span></div>
+            <div>ЗАДАНИЕ: <span id="qProgress">1/16</span></div>
+            <div>ЖИЗНИ: <span id="livesDisplay">❤️❤️❤️</span></div>
+            <div class="timer">⏱️ ДО ПЕРЕМЕШИВАНИЯ: <span id="shuffleTimerDisplay">8:00</span></div>
+        </div>
+        <div class="question-container" id="questionText">Загрузка вопроса...</div>
+        <div class="play-area" id="playArea">
+            <div class="block-row" id="blockRow"></div>
+            <div class="mario" id="mario">👨‍🔧</div>
+        </div>
     </div>
-    <div class="timer-track"><div class="timer-fill" id="timerFill"></div></div>
-    <div class="q-card" id="qCard">
-      <div class="q-topic" id="qTopic"></div>
-      <div class="q-text" id="qText"></div>
-      <div class="q-body" id="qBody"></div>
-      <div class="q-feedback" id="qFeedback"></div>
-    </div>
-  </section>
 
-  <section id="resultScreen" class="screen"></section>
-</main>
+    <!-- МОДАЛЬНОЕ ОКНО -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle"></h2>
+            <span class="emoji-big" id="modalEmoji"></span>
+            <p id="modalText"></p>
+            <div id="modalMedia"></div>
+            <button class="continue-btn" id="modalBtn">Продолжить</button>
+        </div>
+    </div>
 
 <script>
 /* =========================================================
-   ВОПРОСЫ — 5 вариантов × 16 заданий
+   НАСТРОЙКИ МЕДИА-БОНУСОВ
    ========================================================= */
-const QUESTIONS = {
+const MEDIA_REWARDS = [
+    { type: 'video', url: 'https://vkvideo.ru/video-228364761_456239244', title: 'МУЗЫКАЛЬНАЯ ПАУЗА', text: 'Отвлекись на минутку и подпевай!' },
+    { type: 'video', url: 'https://vkvideo.ru/video-175112007_456243343', title: 'Lofi для учёбы', text: 'Расслабься под спокойную музыку.' },
+    { type: 'link', url: 'https://yablyk.com/972197-75-interesnyx-faktov-ob-it-texnologiyax/?ysclid=mw3nhcrt53641450355', title: 'БОНУСНАЯ ССЫЛКА', text: 'Узнай что-то новое про IT!', btnText: 'Открыть факты' },
+    { type: 'link', url: 'https://ru.pinterest.com/ideas/милые-фотки-котиков/914111053343/', title: 'ПОРЦИЯ МИЛОТЫ', text: 'Посмотри на котиков, чтобы снять стресс.', btnText: 'Смотреть котиков' }
+];
 
-  1: [
-    {topic:'Системы счисления',type:'input',q:'Переведи число 45 из десятичной системы в двоичную.',a:'101101',sol:'45 = 32 + 8 + 4 + 1 = 101101₂'},
-    {topic:'Алгебра логики',type:'choice',q:'Для какого X истинно:\nНЕ (X < 6) И (X < 7)',opts:['5','6','7','8'],a:1,sol:'НЕ (X < 6) = X ≥ 6. Вместе с X < 7 даёт 6 ≤ X < 7, то есть X = 6.'},
-    {topic:'Количество информации',type:'input',q:'Сколько бит в 1 Кбайте?',a:'8192',sol:'1 Кбайт = 1024 байта = 1024 × 8 = 8192 бита.'},
-    {topic:'Файловая система',type:'choice',q:'Файл: D:\\ОГЭ\\Задания\\Задача.doc\nВ каком каталоге хранится файл?',opts:['D:\\ОГЭ','D:\\ОГЭ\\Задания','Задания','D:\\'],a:1,sol:'Полный путь = каталог + имя файла. Убираем имя файла — остаётся D:\\ОГЭ\\Задания.'},
-    {topic:'Циклы',type:'input',q:'s := 0\nдля i от 1 до 5\n    s := s + i\nЧему равно s?',a:'15',sol:'s = 1 + 2 + 3 + 4 + 5 = 15.'},
-    {topic:'Исполнитель алгоритма',type:'choice',q:'Черепашка:\nПовтори 4 [Вперёд 50, Направо 90]\nКакая фигура?',opts:['Квадрат','Треугольник','Ромб','Шестиугольник'],a:0,sol:'4 равных отрезка с поворотом на 90°. Суммарный поворот 360° — квадрат.'},
-    {topic:'Кодирование текста',type:'input',q:'Слово «Привет» в 16-битной кодировке.\nСколько байт?',a:'12',sol:'6 символов × 16 бит = 96 бит = 12 байт.'},
-    {topic:'Графы и пути',type:'input',q:'Дороги: A–B=2, B–D=3, A–C=5, C–D=1, D–E=4.\nКратчайший путь из A в E?',a:'9',sol:'A–B–D–E = 2+3+4 = 9.\nA–C–D–E = 5+1+4 = 10.\nМинимум = 9.'},
-    {topic:'Алгебра логики',type:'choice',q:'Чему равно НЕ (A ИЛИ B)?',opts:['НЕ A И НЕ B','НЕ A ИЛИ НЕ B','A И B','A ИЛИ B'],a:0,sol:'Закон де Моргана: НЕ (A ИЛИ B) = НЕ A И НЕ B.'},
-    {topic:'Количество информации',type:'input',q:'Сообщение 32 бита, 8-битная кодировка.\nСколько символов?',a:'4',sol:'32 ÷ 8 = 4 символа.'},
-    {topic:'Интернет-адресация',type:'choice',q:'В адресе http://school.ru/doc.txt\nчто является протоколом?',opts:['http','school.ru','doc.txt','//'],a:0,sol:'Схема адреса: протокол://сервер/файл.\nПротокол — http.'},
-    {topic:'Системы счисления',type:'input',q:'Переведи 100000₂ в десятичную.',a:'32',sol:'100000₂ = 1 × 2⁵ = 32.'},
-    {topic:'Циклы',type:'input',q:'s := 1\nдля i от 1 до 4\n    s := s * 2\nЧему равно s?',a:'16',sol:'Удвоение 4 раза: 1 → 2 → 4 → 8 → 16.'},
-    {topic:'Кодирование текста',type:'input',q:'Слово «ОГЭ» в 16-битной кодировке.\nСколько байт?',a:'6',sol:'3 символа × 16 бит = 48 бит = 6 байт.'},
-    {topic:'Поисковые запросы',type:'input',q:'Маша&(Оля|Катя)=500\nМаша&Оля&Катя=100\nМаша&Оля=300\nНайди Маша&Катя.',a:'300',sol:'500 = 300 + X − 100\nX = 500 − 300 + 100 = 300.'},
-    {topic:'Анализ программы',type:'input',q:'если (s > 10) или (t > A): YES, иначе NO.\nПары: (5,2), (15,2), (5,12), (15,12), (10,5).\nНайди A, при котором YES ровно 3 раза.',a:'10',sol:'При A=10:\n(5,2)→NO, (15,2)→YES, (5,12)→YES, (15,12)→YES, (10,5)→NO.\nИтого 3 YES.'}
-  ],
+/* =========================================================
+   БАЗА ШТРАФНЫХ ВОПРОСОВ (24 УНИКАЛЬНЫХ ЗАДАНИЯ)
+   ========================================================= */
+const PENALTY_QUESTIONS = [
+    { q: "Сколько бит в 0.5 Кбайтах?", opts: ["4096", "512", "1024", "2048"], a: 0 },
+    { q: "Переведи 1110₂ в десятичную.", opts: ["12", "14", "16", "10"], a: 1 },
+    { q: "Какое логическое выражение равносильно НЕ (A И B)?", opts: ["НЕ A И НЕ B", "НЕ A ИЛИ НЕ B", "A ИЛИ B", "A И B"], a: 1 },
+    { q: "Файл 1 Мбайт. Скорость 1 Мбит/с. Сколько секунд?", opts: ["1", "8", "10", "16"], a: 1 },
+    { q: "Какой минимальный бит нужен для кодирования 5 цветов?", opts: ["2", "3", "4", "5"], a: 1 },
+    { q: "s := 0\nдля i от 1 до 4\n  s := s + 2\nЧему равно s?", opts: ["6", "8", "10", "12"], a: 1 },
+    { q: "Путь A-B=3, B-C=4, A-C=8, C-D=2.\nПуть A→D?", opts: ["8", "9", "10", "11"], a: 1 },
+    { q: "Слово «Экзамен» в 8-битной кодировке.\nСколько байт?", opts: ["6", "7", "8", "9"], a: 1 },
+    { q: "Переведи 20₁₀ в двоичную.", opts: ["10100", "10010", "11000", "11100"], a: 0 },
+    { q: "Сколько Кбайт в 1/4 Мбайта?", opts: ["256", "512", "1024", "2048"], a: 0 },
+    { q: "Маша&(Оля|Катя)=100\nМаша&Оля&Катя=20\nМаша&Оля=60\nНайди Маша&Катя.", opts: ["40", "50", "60", "80"], a: 2 },
+    { q: "В корзине 16 шаров. Сколько бит на 1 шар?", opts: ["2", "4", "8", "16"], a: 1 },
+    { q: "s := 1\nдля i от 1 до 3\n  s := s * 3\nЧему равно s?", opts: ["9", "18", "27", "81"], a: 2 },
+    { q: "Переведи 1001₂ в десятичную.", opts: ["7", "8", "9", "10"], a: 2 },
+    { q: "Для какого X ложно:\n(X > 2) И (X < 5)", opts: ["3", "4", "5", "6"], a: 3 },
+    { q: "Файл 2 Мбайта. Скорость 4 Мбит/с.\nСколько секунд?", opts: ["2", "4", "8", "16"], a: 1 },
+    { q: "Сколько байт в 16 битах?", opts: ["1", "2", "4", "8"], a: 1 },
+    { q: "s := 0\nдля i от 1 до 5\n  s := s + i\nЧему равно s?", opts: ["10", "15", "20", "25"], a: 1 },
+    { q: "В URL http://test.ru/file.txt\nчто является файлом?", opts: ["http", "test.ru", "file.txt", "/"], a: 2 },
+    { q: "Чему равно НЕ (A ИЛИ B) И A?", opts: ["A", "B", "0", "1"], a: 2 },
+    { q: "Переведи 64₁₀ в двоичную.", opts: ["1000000", "100000", "1100000", "10000000"], a: 0 },
+    { q: "Сколько бит в 2 Кбайтах?", opts: ["1024", "2048", "16384", "8192"], a: 2 },
+    { q: "Путь A-B=2, B-C=3, A-C=7, C-D=1.\nПуть A→D?", opts: ["6", "7", "8", "9"], a: 0 },
+    { q: "Слово «Тест» в 16-битной кодировке.\nСколько байт?", opts: ["4", "8", "12", "16"], a: 1 }
+];
 
-  2: [
-    {topic:'Системы счисления',type:'input',q:'Переведи 100000₂ в десятичную.',a:'32',sol:'100000₂ = 1 × 2⁵ = 32.'},
-    {topic:'Алгебра логики',type:'choice',q:'Для какого X истинно:\nНЕ (X < 5) И (X < 7)',opts:['4','5','7','8'],a:1,sol:'НЕ (X < 5) = X ≥ 5. Вместе с X < 7 даёт X = 5.'},
-    {topic:'Количество информации',type:'input',q:'Сколько Кбайт в 2 Мбайтах?',a:'2048',sol:'1 Мбайт = 1024 Кбайт.\n2 Мбайта = 2048 Кбайт.'},
-    {topic:'Интернет-адресация',type:'choice',q:'В адресе ftp://files.net/data.zip\nчто является сервером?',opts:['ftp','files.net','data.zip','://'],a:1,sol:'Схема адреса: протокол://сервер/файл.\nСервер — files.net.'},
-    {topic:'Циклы',type:'input',q:'s := 0\nдля i от 1 до 6\n    s := s + i\nЧему равно s?',a:'21',sol:'s = 1+2+3+4+5+6 = 21.'},
-    {topic:'Исполнитель алгоритма',type:'choice',q:'Черепашка:\nПовтори 3 [Вперёд 40, Направо 120]\nКакая фигура?',opts:['Квадрат','Треугольник','Шестиугольник','Ромб'],a:1,sol:'3 отрезка с поворотом на 120°. Суммарный поворот 360° — треугольник.'},
-    {topic:'Кодирование текста',type:'input',q:'Слово «ОГЭ» в 16-битной кодировке.\nСколько байт?',a:'6',sol:'3 × 16 бит = 48 бит = 6 байт.'},
-    {topic:'Графы и пути',type:'input',q:'Дороги: A–B=1, B–C=2, A–C=5, C–D=3, B–D=6.\nКратчайший путь из A в D?',a:'6',sol:'A–B–C–D = 1+2+3 = 6.\nA–C–D = 5+3 = 8.\nA–B–D = 1+6 = 7.\nМинимум = 6.'},
-    {topic:'Алгебра логики',type:'choice',q:'Чему равно A И (B ИЛИ C)?',opts:['(A И B) ИЛИ (A И C)','(A ИЛИ B) И C','A ИЛИ B ИЛИ C','(A ИЛИ B) ИЛИ C'],a:0,sol:'Распределительный закон: A И (B ИЛИ C) = (A И B) ИЛИ (A И C).'},
-    {topic:'Количество информации',type:'input',q:'Сколько бит в 2 байтах?',a:'16',sol:'1 байт = 8 бит.\n2 байта = 16 бит.'},
-    {topic:'Поисковые запросы',type:'input',q:'Маша&(Оля|Катя)=700\nМаша&Оля&Катя=150\nМаша&Оля=400\nНайди Маша&Катя.',a:'450',sol:'700 = 400 + X − 150\nX = 700 − 400 + 150 = 450.'},
-    {topic:'Системы счисления',type:'input',q:'Переведи 27₁₀ в двоичную.',a:'11011',sol:'27 = 16 + 8 + 2 + 1 = 11011₂'},
-    {topic:'Файловая система',type:'choice',q:'Файл: D:\\Работы\\Задачи\\prog.exe\nВ каком каталоге файл?',opts:['D:\\','D:\\Работы','D:\\Работы\\Задачи','prog.exe'],a:2,sol:'Убираем имя файла — получаем D:\\Работы\\Задачи.'},
-    {topic:'Анализ программы',type:'input',q:'если (s < 10) и (t > A): YES, иначе NO.\nПары: (1,2), (11,2), (1,12), (11,12), (5,5).\nНайди A, при котором YES ровно 2 раза.',a:'3',sol:'При A=3:\n(1,2)→NO, (11,2)→NO, (1,12)→YES, (11,12)→NO, (5,5)→YES.\nИтого 2 YES.'},
-    {topic:'Циклы',type:'input',q:'s := 0\nдля i от 1 до 10\n    если i mod 2 = 0, то s := s + i\nЧему равно s?',a:'30',sol:'Сумма чётных: 2+4+6+8+10 = 30.'},
-    {topic:'Кодирование текста',type:'input',q:'Сообщение 24 бита, 8-битная кодировка.\nСколько символов?',a:'3',sol:'24 ÷ 8 = 3 символа.'}
-  ],
+// Переменная для хранения текущей колоды штрафных вопросов
+let penaltyPool = [];
 
-  3: [
-    {topic:'Системы счисления',type:'input',q:'Переведи 46₁₀ в двоичную.',a:'101110',sol:'46 = 32 + 8 + 4 + 2 = 101110₂'},
-    {topic:'Системы счисления',type:'input',q:'Сколько единиц в двоичной записи числа 46?',a:'4',sol:'46 = 101110₂. Четыре единицы.'},
-    {topic:'Алгебра логики',type:'choice',q:'Для какого X истинно:\n(X > 10) И НЕ (X > 15)',opts:['8','10','12','16'],a:2,sol:'НЕ (X > 15) = X ≤ 15. Вместе: 10 < X ≤ 15. Подходит 12.'},
-    {topic:'Скорость передачи',type:'input',q:'Файл 4 Кбайт, скорость 1024 бит/с.\nСколько секунд?',a:'32',sol:'4 Кбайт = 4×1024×8 = 32 768 бит.\n32 768 ÷ 1024 = 32 секунды.'},
-    {topic:'Циклы',type:'input',q:'s := 0\nдля i от 1 до 5\n    s := s + i*i\nЧему равно s?',a:'55',sol:'s = 1²+2²+3²+4²+5² = 1+4+9+16+25 = 55.'},
-    {topic:'Количество информации',type:'input',q:'Реферат: 8 стр × 40 строк × 32 символа.\nКаждый символ — 8 бит.\nОбъём в Кбайтах?',a:'10',sol:'8×40×32 = 10 240 символов.\n10 240 × 8 = 81 920 бит = 10 240 байт = 10 Кбайт.'},
-    {topic:'Интернет-адресация',type:'choice',q:'В адресе https://wiki.org/page.html\nчто является сервером?',opts:['https','wiki.org','page.html','://'],a:1,sol:'Сервер — wiki.org.'},
-    {topic:'Графы и пути',type:'input',q:'Дороги: A–B=3, A–C=2, B–C=1, B–D=4, C–D=2, C–E=5, D–E=1.\nПуть A→E?',a:'5',sol:'A–C–D–E = 2+2+1 = 5 — минимум.'},
-    {topic:'Алгебра логики',type:'choice',q:'Чему равно НЕ (A И B)?',opts:['НЕ A И НЕ B','НЕ A ИЛИ НЕ B','A ИЛИ B','НЕ A И B'],a:1,sol:'Закон де Моргана: НЕ (A И B) = НЕ A ИЛИ НЕ B.'},
-    {topic:'Количество информации',type:'input',q:'Сколько Кбайт в 2048 байтах?',a:'2',sol:'2048 ÷ 1024 = 2 Кбайта.'},
-    {topic:'Системы счисления',type:'input',q:'Переведи 111111₂ в десятичную.',a:'63',sol:'1+2+4+8+16+32 = 63.'},
-    {topic:'Поисковые запросы',type:'input',q:'Диана&(Аврора|Паллада)=800\nДиана&Аврора&Паллада=220\nДиана&Аврора=550\nНайди Диана&Паллада.',a:'470',sol:'800 = 550 + X − 220\nX = 800 − 550 + 220 = 470.'},
-    {topic:'Анализ программы',type:'input',q:'если (s > 5) ИЛИ (t < A): YES, иначе NO.\nПары: (1,2), (6,2), (1,7), (6,7), (-1,-2).\nНайди A, при котором YES ровно 3 раза.',a:'2',sol:'При A=2:\n(1,2)→NO, (6,2)→YES, (1,7)→NO, (6,7)→YES, (-1,-2)→YES.\nИтого 3 YES.'},
-    {topic:'Файловая система',type:'input',q:'Файл photo.jpg лежит в D:\\Фото\\Море.\nЗапиши полное имя файла.',a:'D:\\Фото\\Море\\photo.jpg',sol:'Полный путь = каталог + имя файла:\nD:\\Фото\\Море\\photo.jpg'},
-    {topic:'Циклы',type:'input',q:'s := 0\nдля i от 1 до 4\n    s := s + i*i\nЧему равно s?',a:'30',sol:'1²+2²+3²+4² = 1+4+9+16 = 30.'},
-    {topic:'Кодирование текста',type:'input',q:'Сообщение 128 бит, 16-битная кодировка.\nСколько символов?',a:'8',sol:'128 ÷ 16 = 8 символов.'}
-  ],
+function initPenaltyPool() {
+    // Перемешиваем копию массива
+    penaltyPool = [...PENALTY_QUESTIONS].sort(() => Math.random() - 0.5);
+}
 
-  4: [
-    {topic:'Количество информации',type:'input',q:'Сколько бит в 1 Мбайте?',a:'8388608',sol:'1 Мбайт = 1024 × 1024 байт = 1 048 576 байт.\n× 8 = 8 388 608 бит.'},
-    {topic:'Системы счисления',type:'input',q:'Переведи 50₁₀ в двоичную.',a:'110010',sol:'50 = 32 + 16 + 2 = 110010₂'},
-    {topic:'Алгебра логики',type:'choice',q:'Для какого X истинно:\nНЕ (X > 5) И (X > 3)',opts:['2','4','6','8'],a:1,sol:'НЕ (X > 5) = X ≤ 5. Вместе с X > 3 даёт 3 < X ≤ 5. Подходит 4.'},
-    {topic:'Исполнитель алгоритма',type:'choice',q:'Черепашка:\nПовтори 6 [Вперёд 40, Направо 60]\nКакая фигура?',opts:['Квадрат','Треугольник','Шестиугольник','Ромб'],a:2,sol:'6 × 60° = 360° — шестиугольник.'},
-    {topic:'Циклы',type:'input',q:'s := 0\nдля i от 1 до 10\n    s := s + i\nЧему равно s?',a:'55',sol:'1+2+...+10 = 55.'},
-    {topic:'Кодирование текста',type:'input',q:'Слово «Файл» в 16-битной кодировке.\nСколько байт?',a:'8',sol:'4 символа × 16 = 64 бит = 8 байт.'},
-    {topic:'Графы и пути',type:'input',q:'Дороги: A–B=2, A–C=4, B–C=1, B–D=5, C–D=2, D–E=3.\nПуть A→E?',a:'8',sol:'A–B–C–D–E = 2+1+2+3 = 8 — минимум.'},
-    {topic:'Алгебра логики',type:'choice',q:'Чему равно A ИЛИ (B И C)?',opts:['(A ИЛИ B) И (A ИЛИ C)','A И B И C','A ИЛИ B ИЛИ C','(A И B) ИЛИ C'],a:0,sol:'Распределительный закон: A ИЛИ (B И C) = (A ИЛИ B) И (A ИЛИ C).'},
-    {topic:'Интернет-адресация',type:'choice',q:'В адресе https://ru.wikipedia.org/wiki\nчто является сервером?',opts:['https','ru.wikipedia.org','wiki','://'],a:1,sol:'Сервер — ru.wikipedia.org.'},
-    {topic:'Скорость передачи',type:'input',q:'Файл 2 Кбайт, скорость 512 бит/с.\nСколько секунд?',a:'32',sol:'2 Кбайт = 16 384 бит.\n16 384 ÷ 512 = 32 секунды.'},
-    {topic:'Системы счисления',type:'input',q:'Переведи 111₁₀ в восьмеричную.',a:'157',sol:'111 / 8 = 13 ост. 7\n13 / 8 = 1 ост. 5\n1 / 8 = 0 ост. 1\n→ 157₈'},
-    {topic:'Поисковые запросы',type:'input',q:'Солнце&(Лето|Море)=400\nСолнце&Лето&Море=80\nСолнце&Лето=250\nНайди Солнце&Море.',a:'230',sol:'400 = 250 + X − 80\nX = 400 − 250 + 80 = 230.'},
-    {topic:'Файловая система',type:'input',q:'Файл photo.jpg лежит в D:\\Фото\\Море.\nЗапиши полное имя файла.',a:'D:\\Фото\\Море\\photo.jpg',sol:'D:\\Фото\\Море\\photo.jpg'},
-    {topic:'Анализ программы',type:'input',q:'если (s > 5) ИЛИ (t > A): YES, иначе NO.\nПары: (1,2), (6,2), (1,7), (6,7), (5,5).\nНайди наименьшее A, при котором YES ровно 2 раза.',a:'7',sol:'При A=7:\n(1,2)→NO, (6,2)→YES, (1,7)→NO, (6,7)→YES, (5,5)→NO.\nИтого 2 YES. При A=6 было бы 3 YES.'},
-    {topic:'Количество информации',type:'input',q:'Сколько байт в 4 Кбайтах?',a:'4096',sol:'4 × 1024 = 4096 байт.'},
-    {topic:'Кодирование текста',type:'input',q:'Сообщение 24 бита, 8-битная кодировка.\nСколько символов?',a:'3',sol:'24 ÷ 8 = 3 символа.'}
-  ],
+function getNextPenaltyQuestion() {
+    if (penaltyPool.length === 0) {
+        initPenaltyPool(); // Если колода пуста, заполняем заново
+    }
+    return penaltyPool.pop(); // Берем последний (и удаляем из колоды)
+}
 
-  5: [
-    {topic:'Системы счисления',type:'input',q:'Переведи 100₁₀ в двоичную.',a:'1100100',sol:'100 = 64 + 32 + 4 = 1100100₂'},
-    {topic:'Алгебра логики',type:'choice',q:'Для какого X истинно:\n(X > 4) И НЕ (X > 8)',opts:['3','5','9','10'],a:1,sol:'НЕ (X > 8) = X ≤ 8. Вместе: 4 < X ≤ 8. Подходит 5.'},
-    {topic:'Скорость передачи',type:'input',q:'Файл 4 Кбайт, скорость 2048 бит/с.\nСколько секунд?',a:'16',sol:'4 Кбайт = 32 768 бит.\n32 768 ÷ 2048 = 16 секунд.'},
-    {topic:'Исполнитель алгоритма',type:'choice',q:'Черепашка:\nПовтори 8 [Вперёд 20, Направо 45]\nКакая фигура?',opts:['Квадрат','Шестиугольник','Восьмиугольник','Ромб'],a:2,sol:'8 × 45° = 360° — восьмиугольник.'},
-    {topic:'Циклы',type:'input',q:'s := 0\nдля i от 1 до 6\n    s := s + i*i\nЧему равно s?',a:'91',sol:'1+4+9+16+25+36 = 91.'},
-    {topic:'Кодирование текста',type:'input',q:'Слово «Кот» в 16-битной кодировке.\nСколько байт?',a:'6',sol:'3 × 16 = 48 бит = 6 байт.'},
-    {topic:'Графы и пути',type:'input',q:'Дороги: A–B=1, A–C=2, B–C=3, B–D=4, C–D=1, D–E=5.\nПуть A→E?',a:'8',sol:'A–C–D–E = 2+1+5 = 8 — минимум.'},
-    {topic:'Алгебра логики',type:'choice',q:'Чему равно НЕ (A) И НЕ (B)?',opts:['НЕ (A ИЛИ B)','НЕ (A И B)','A ИЛИ B','A И B'],a:0,sol:'По закону де Моргана: НЕ A И НЕ B = НЕ (A ИЛИ B).'},
-    {topic:'Интернет-адресация',type:'input',q:'Доступ к файлу index.html на сервере site.com по протоколу https.\nФрагменты: 1) html  2) index  3) com  4) https  5) site  6) /  7) ://  8) .\nЗапиши последовательность цифр.',a:'475836281',sol:'https://site.com/index.html\n4 (https) 7 (://) 5 (site) 8 (.) 3 (com) 6 (/) 2 (index) 8 (.) 1 (html)'},
-    {topic:'Поисковые запросы',type:'input',q:'Луна&(Звёзды|Планеты)=300\nЛуна&Звёзды&Планеты=50\nЛуна&Звёзды=180\nНайди Луна&Планеты.',a:'170',sol:'300 = 180 + X − 50\nX = 300 − 180 + 50 = 170.'},
-    {topic:'Файловая система',type:'choice',q:'Файл: D:\\Учёба\\Информатика\\тест.doc\nВ каком каталоге?',opts:['D:\\','D:\\Учёба','D:\\Учёба\\Информатика','тест.doc'],a:2,sol:'Убираем имя — D:\\Учёба\\Информатика.'},
-    {topic:'Системы счисления',type:'input',q:'Переведи 101₁₀ в восьмеричную.',a:'145',sol:'101 / 8 = 12 ост. 5\n12 / 8 = 1 ост. 4\n1 / 8 = 0 ост. 1\n→ 145₈'},
-    {topic:'Анализ программы',type:'input',q:'если (s > 10) или (t > A): YES, иначе NO.\nПары: (1,2), (11,2), (1,12), (11,12), (10,10).\nНайди наибольшее A, при котором YES ровно 3 раза.',a:'11',sol:'A=10: 3 YES. A=11: 3 YES. A=12: 2 YES.\nНаибольшее A с тремя YES = 11.'},
-    {topic:'Количество информации',type:'input',q:'Сколько байт в 8 Кбайтах?',a:'8192',sol:'8 × 1024 = 8192 байт.'},
-    {topic:'Циклы',type:'input',q:'Найди 5! (факториал пяти).',a:'120',sol:'5! = 1×2×3×4×5 = 120.'},
-    {topic:'Кодирование текста',type:'input',q:'Слово «Код» в 8-битной кодировке.\nСколько байт?',a:'3',sol:'3 × 8 = 24 бит = 3 байта.'}
-  ]
+/* =========================================================
+   БАЗА ОСНОВНЫХ ВОПРОСОВ (5 УРОВНЕЙ ПО 16 ЗАДАНИЙ)
+   ========================================================= */
+const LEVELS = [
+    { theme: "theme-space", name: "Космос", questions: [ { q: "Переведи число 45 из десятичной в двоичную.", opts: ["101101", "101100", "110101", "101110"], a: 0 }, { q: "Для какого X истинно:\nНЕ (X < 6) И (X < 7)", opts: ["5", "6", "7", "8"], a: 1 }, { q: "Сколько бит в 1 Кбайте?", opts: ["1024", "8192", "8000", "4096"], a: 1 }, { q: "Где хранится файл?\nD:\\ОГЭ\\Задания\\Задача.doc", opts: ["D:\\ОГЭ", "D:\\ОГЭ\\Задания", "Задания", "D:\\"], a: 1 }, { q: "s := 0\nдля i от 1 до 5\n  s := s + i\nЧему равно s?", opts: ["10", "15", "20", "25"], a: 1 }, { q: "Повтори 4 [Вперёд 50, Направо 90]\nКакая фигура?", opts: ["Квадрат", "Треугольник", "Ромб", "Круг"], a: 0 }, { q: "Слово «Привет» (6 букв) в 16-битной кодировке.\nСколько байт?", opts: ["6", "12", "16", "24"], a: 1 }, { q: "A–B=2, B–D=3, A–C=5, C–D=1, D–E=4.\nКратчайший путь A→E?", opts: ["7", "8", "9", "10"], a: 2 }, { q: "Чему равно НЕ (A ИЛИ B)?", opts: ["НЕ A И НЕ B", "НЕ A ИЛИ НЕ B", "A И B", "A ИЛИ B"], a: 0 }, { q: "Сообщение 32 бита, 8-битная кодировка.\nСколько символов?", opts: ["2", "4", "8", "16"], a: 1 }, { q: "В адресе http://school.ru/doc.txt\nчто является протоколом?", opts: ["http", "school.ru", "doc.txt", "//"], a: 0 }, { q: "Переведи 100000₂ в десятичную.", opts: ["16", "32", "64", "128"], a: 1 }, { q: "s := 1\nдля i от 1 до 4\n  s := s * 2\nЧему равно s?", opts: ["8", "12", "16", "32"], a: 2 }, { q: "Слово «ОГЭ» в 16-битной кодировке.\nСколько байт?", opts: ["3", "6", "9", "12"], a: 1 }, { q: "Маша&(Оля|Катя)=500\nМаша&Оля&Катя=100\nМаша&Оля=300\nНайди Маша&Катя.", opts: ["200", "300", "400", "500"], a: 1 }, { q: "если (s > 10) или (t > A): YES.\nПары: (5,2), (15,2), (5,12), (15,12), (10,5).\nНайди A, при котором YES ровно 3 раза.", opts: ["8", "10", "12", "15"], a: 1 } ] },
+    { theme: "theme-jungle", name: "Джунгли", questions: [ { q: "Переведи 100000₂ в десятичную.", opts: ["16", "32", "64", "128"], a: 1 }, { q: "Для какого X истинно:\nНЕ (X < 5) И (X < 7)", opts: ["4", "5", "6", "7"], a: 1 }, { q: "Сколько Кбайт в 2 Мбайтах?", opts: ["1024", "2048", "4096", "8192"], a: 1 }, { q: "В адресе ftp://files.net/data.zip\nчто является сервером?", opts: ["ftp", "files.net", "data.zip", "://"], a: 1 }, { q: "s := 0\nдля i от 1 до 6\n  s := s + i\nЧему равно s?", opts: ["15", "21", "28", "36"], a: 1 }, { q: "Повтори 3 [Вперёд 40, Направо 120]\nКакая фигура?", opts: ["Квадрат", "Треугольник", "Шестиугольник", "Ромб"], a: 1 }, { q: "Слово «ОГЭ» в 16-битной кодировке.\nСколько байт?", opts: ["3", "6", "9", "12"], a: 1 }, { q: "A–B=1, B–C=2, A–C=5, C–D=3, B–D=6.\nКратчайший A→D?", opts: ["5", "6", "7", "8"], a: 1 }, { q: "Чему равно A И (B ИЛИ C)?", opts: ["(A И B) ИЛИ (A И C)", "(A ИЛИ B) И C", "A ИЛИ B ИЛИ C", "(A ИЛИ B) ИЛИ C"], a: 0 }, { q: "Сколько бит в 2 байтах?", opts: ["8", "16", "24", "32"], a: 1 }, { q: "Маша&(Оля|Катя)=700\nМаша&Оля&Катя=150\nМаша&Оля=400\nНайди Маша&Катя.", opts: ["300", "400", "450", "500"], a: 2 }, { q: "Переведи 27₁₀ в двоичную.", opts: ["11011", "10111", "11101", "10011"], a: 0 }, { q: "Файл: D:\\Работы\\Задачи\\prog.exe\nВ каком каталоге?", opts: ["D:\\", "D:\\Работы", "D:\\Работы\\Задачи", "prog.exe"], a: 2 }, { q: "если (s < 10) и (t > A): YES.\n(1,2), (11,2), (1,12), (11,12), (5,5).\nНайди A, при котором YES 2 раза.", opts: ["1", "3", "5", "7"], a: 1 }, { q: "s := 0\nдля i от 1 до 10\n  если i mod 2 = 0, то s := s + i\nЧему равно s?", opts: ["20", "25", "30", "35"], a: 2 }, { q: "Сообщение 24 бита, 8-битная кодировка.\nСколько символов?", opts: ["2", "3", "4", "6"], a: 1 } ] },
+    { theme: "theme-cyber", name: "Киберпанк", questions: [ { q: "Переведи 46₁₀ в двоичную.", opts: ["101110", "101101", "110110", "101010"], a: 0 }, { q: "Сколько единиц в двоичной записи числа 46?", opts: ["2", "3", "4", "5"], a: 2 }, { q: "Для какого X истинно:\n(X > 10) И НЕ (X > 15)", opts: ["8", "10", "12", "16"], a: 2 }, { q: "Файл 4 Кбайт, скорость 1024 бит/с.\nСколько секунд?", opts: ["16", "24", "32", "48"], a: 2 }, { q: "s := 0\nдля i от 1 до 5\n  s := s + i*i\nЧему равно s?", opts: ["30", "45", "55", "65"], a: 2 }, { q: "8 стр × 40 строк × 32 символа.\n8 бит на символ. Объём в Кбайтах?", opts: ["5", "10", "15", "20"], a: 1 }, { q: "В адресе https://wiki.org/page.html\nчто является сервером?", opts: ["https", "wiki.org", "page.html", "://"], a: 1 }, { q: "A–B=3, A–C=2, B–C=1, B–D=4, C–D=2, C–E=5, D–E=1.\nПуть A→E?", opts: ["4", "5", "6", "7"], a: 1 }, { q: "Чему равно НЕ (A И B)?", opts: ["НЕ A И НЕ B", "НЕ A ИЛИ НЕ B", "A ИЛИ B", "НЕ A И B"], a: 1 }, { q: "Сколько Кбайт в 2048 байтах?", opts: ["1", "2", "4", "8"], a: 1 }, { q: "Переведи 111111₂ в десятичную.", opts: ["31", "63", "127", "255"], a: 1 }, { q: "Диана&(Аврора|Паллада)=800\nДиана&Аврора&Паллада=220\nДиана&Аврора=550\nНайди Диана&Паллада.", opts: ["430", "470", "500", "530"], a: 1 }, { q: "если (s > 5) ИЛИ (t < A): YES.\n(1,2), (6,2), (1,7), (6,7), (-1,-2).\nНайди A, при котором YES 3 раза.", opts: ["1", "2", "3", "4"], a: 1 }, { q: "Файл photo.jpg лежит в D:\\Фото\\Море.\nЗапиши полное имя файла.", opts: ["D:\\Фото", "D:\\Фото\\Море", "D:\\Фото\\Море\\photo.jpg", "photo.jpg"], a: 2 }, { q: "s := 0\nдля i от 1 до 4\n  s := s + i*i\nЧему равно s?", opts: ["20", "25", "30", "35"], a: 2 }, { q: "Сообщение 128 бит, 16-битная кодировка.\nСколько символов?", opts: ["4", "6", "8", "16"], a: 2 } ] },
+    { theme: "theme-ocean", name: "Океан", questions: [ { q: "Сколько бит в 1 Мбайте?", opts: ["1048576", "8388608", "4194304", "16777216"], a: 1 }, { q: "Переведи 50₁₀ в двоичную.", opts: ["110010", "110100", "100110", "101010"], a: 0 }, { q: "Для какого X истинно:\nНЕ (X > 5) И (X > 3)", opts: ["2", "4", "6", "8"], a: 1 }, { q: "Повтори 6 [Вперёд 40, Направо 60]\nКакая фигура?", opts: ["Квадрат", "Треугольник", "Шестиугольник", "Ромб"], a: 2 }, { q: "s := 0\nдля i от 1 до 10\n  s := s + i\nЧему равно s?", opts: ["45", "50", "55", "60"], a: 2 }, { q: "Слово «Файл» в 16-битной кодировке.\nСколько байт?", opts: ["4", "8", "12", "16"], a: 1 }, { q: "A–B=2, A–C=4, B–C=1, B–D=5, C–D=2, D–E=3.\nПуть A→E?", opts: ["6", "7", "8", "9"], a: 2 }, { q: "Чему равно A ИЛИ (B И C)?", opts: ["(A ИЛИ B) И (A ИЛИ C)", "A И B И C", "A ИЛИ B ИЛИ C", "(A И B) ИЛИ C"], a: 0 }, { q: "В адресе https://ru.wikipedia.org/wiki\nчто является сервером?", opts: ["https", "ru.wikipedia.org", "wiki", "://"], a: 1 }, { q: "Файл 2 Кбайт, скорость 512 бит/с.\nСколько секунд?", opts: ["16", "24", "32", "48"], a: 2 }, { q: "Переведи 111₁₀ в восьмеричную.", opts: ["147", "157", "167", "177"], a: 1 }, { q: "Солнце&(Лето|Море)=400\nСолнце&Лето&Море=80\nСолнце&Лето=250\nНайди Солнце&Море.", opts: ["200", "230", "250", "280"], a: 1 }, { q: "если (s > 5) ИЛИ (t > A): YES.\n(1,2), (6,2), (1,7), (6,7), (5,5).\nНайди наименьшее A, при котором YES 2 раза.", opts: ["5", "6", "7", "8"], a: 2 }, { q: "Сколько байт в 4 Кбайтах?", opts: ["2048", "4096", "8192", "1024"], a: 1 }, { q: "Сообщение 24 бита, 8-битная кодировка.\nСколько символов?", opts: ["2", "3", "4", "6"], a: 1 }, { q: "s := 0\nдля i от 1 до 5\n  если i mod 2 = 1, то s := s + i\nЧему равно s?", opts: ["6", "9", "15", "20"], a: 1 } ] },
+    { theme: "theme-volcano", name: "Вулкан", questions: [ { q: "Переведи 100₁₀ в двоичную.", opts: ["1100100", "1100010", "1010100", "1110000"], a: 0 }, { q: "Для какого X истинно:\n(X > 4) И НЕ (X > 8)", opts: ["3", "5", "9", "10"], a: 1 }, { q: "Файл 4 Кбайт, скорость 2048 бит/с.\nСколько секунд?", opts: ["8", "12", "16", "20"], a: 2 }, { q: "Повтори 8 [Вперёд 20, Направо 45]\nКакая фигура?", opts: ["Квадрат", "Шестиугольник", "Восьмиугольник", "Ромб"], a: 2 }, { q: "s := 0\nдля i от 1 до 6\n  s := s + i*i\nЧему равно s?", opts: ["81", "91", "101", "111"], a: 1 }, { q: "Слово «Кот» в 16-битной кодировке.\nСколько байт?", opts: ["3", "6", "9", "12"], a: 1 }, { q: "A–B=1, A–C=2, B–C=3, B–D=4, C–D=1, D–E=5.\nПуть A→E?", opts: ["7", "8", "9", "10"], a: 1 }, { q: "Чему равно НЕ (A) И НЕ (B)?", opts: ["НЕ (A ИЛИ B)", "НЕ (A И B)", "A ИЛИ B", "A И B"], a: 0 }, { q: "Доступ к файлу index.html на сервере site.com по протоколу https.\nhttps://site.com/index.html", opts: ["https", "site.com", "index.html", "site.com/index.html"], a: 1 }, { q: "Луна&(Звёзды|Планеты)=300\nЛуна&Звёзды&Планеты=50\nЛуна&Звёзды=180\nНайди Луна&Планеты.", opts: ["120", "170", "220", "270"], a: 1 }, { q: "Файл: D:\\Учёба\\Информатика\\тест.doc\nВ каком каталоге?", opts: ["D:\\", "D:\\Учёба", "D:\\Учёба\\Информатика", "тест.doc"], a: 2 }, { q: "Переведи 101₁₀ в восьмеричную.", opts: ["135", "145", "155", "165"], a: 1 }, { q: "если (s > 10) или (t > A): YES.\n(1,2), (11,2), (1,12), (11,12), (10,10).\nНайди наибольшее A, при котором YES 3 раза.", opts: ["10", "11", "12", "13"], a: 1 }, { q: "Сколько байт в 8 Кбайтах?", opts: ["4096", "8192", "16384", "1024"], a: 1 }, { q: "Найди 5! (факториал пяти).", opts: ["60", "80", "100", "120"], a: 3 }, { q: "Слово «Код» в 8-битной кодировке.\nСколько байт?", opts: ["2", "3", "4", "6"], a: 1 } ] }
+];
+
+/* =========================================================
+   ЗВУКИ
+   ========================================================= */
+let audioCtx = null;
+function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+function playSound(type) {
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    const now = audioCtx.currentTime;
+    if (type === 'coin') { osc.type='square'; osc.frequency.setValueAtTime(987.77,now); osc.frequency.setValueAtTime(1318.51,now+0.1); gain.gain.setValueAtTime(0.1,now); gain.gain.exponentialRampToValueAtTime(0.01,now+0.4); osc.start(now); osc.stop(now+0.4); }
+    else if (type === 'die') { osc.type='sawtooth'; osc.frequency.setValueAtTime(300,now); osc.frequency.exponentialRampToValueAtTime(50,now+0.8); gain.gain.setValueAtTime(0.1,now); gain.gain.exponentialRampToValueAtTime(0.01,now+0.8); osc.start(now); osc.stop(now+0.8); }
+    else if (type === 'bump') { osc.type='square'; osc.frequency.setValueAtTime(150,now); osc.frequency.exponentialRampToValueAtTime(80,now+0.2); gain.gain.setValueAtTime(0.1,now); gain.gain.exponentialRampToValueAtTime(0.01,now+0.2); osc.start(now); osc.stop(now+0.2); }
+    else if (type === 'powerup') { osc.type='triangle'; osc.frequency.setValueAtTime(440,now); osc.frequency.linearRampToValueAtTime(880,now+0.2); osc.frequency.linearRampToValueAtTime(1760,now+0.4); gain.gain.setValueAtTime(0.1,now); gain.gain.linearRampToValueAtTime(0.01,now+0.5); osc.start(now); osc.stop(now+0.5); }
+    else if (type === 'shuffle') { osc.type='sine'; osc.frequency.setValueAtTime(400,now); osc.frequency.exponentialRampToValueAtTime(800,now+0.1); osc.frequency.exponentialRampToValueAtTime(400,now+0.2); gain.gain.setValueAtTime(0.1,now); gain.gain.exponentialRampToValueAtTime(0.01,now+0.3); osc.start(now); osc.stop(now+0.3); }
+}
+
+/* =========================================================
+   СОСТОЯНИЕ И ФИЗИКА
+   ========================================================= */
+const state = { 
+    levelIdx: 0, qIdx: 0, score: 0, lives: 3, isPenalty: false, locked: false, 
+    marioX: 50, marioY: 0, marioVY: 0, isJumping: false, targetX: null,
+    timeLeft: 480,
+    currentPenaltyTask: null // Храним текущее штрафное задание
 };
 
-const THEMES = {
-  1:{name:'Космос',   theme:'space',  emoji:'🚀'},
-  2:{name:'Джунгли',  theme:'jungle', emoji:'🌿'},
-  3:{name:'Киберпанк',theme:'cyber',  emoji:'⚡'},
-  4:{name:'Океан',    theme:'ocean',  emoji:'🌊'},
-  5:{name:'Вулкан',   theme:'volcano',emoji:'🌋'}
+const elements = {
+    menu: document.getElementById('main-menu'), game: document.getElementById('game-screen'),
+    question: document.getElementById('questionText'), blockRow: document.getElementById('blockRow'),
+    mario: document.getElementById('mario'), score: document.getElementById('scoreDisplay'),
+    level: document.getElementById('levelDisplay'), progress: document.getElementById('qProgress'),
+    lives: document.getElementById('livesDisplay'), playArea: document.getElementById('playArea'),
+    modal: document.getElementById('modal'), mTitle: document.getElementById('modalTitle'),
+    mEmoji: document.getElementById('modalEmoji'), mText: document.getElementById('modalText'),
+    mMedia: document.getElementById('modalMedia'), mBtn: document.getElementById('modalBtn'),
+    timerDisplay: document.getElementById('shuffleTimerDisplay')
 };
 
-const TOTAL_Q = 16;
-const TIME_PER_Q = 4000; // <-- Вот эта строка отвечает за время (в секундах)
+const BLOCK_Y = 180;
+const GRAVITY = 0.8;
+const JUMP_POWER = 17;
+const SPEED = 15;
 
-const state = {
-  variant:1, qIndex:0, score:0, lives:3, streak:0,
-  bestStreak:0, locked:false, timeLeft:TIME_PER_Q,
-  timerId:null, results:[], fastAnswers:0
-};
+/* =========================================================
+   ТАЙМЕР ПЕРЕМЕШИВАНИЯ
+   ========================================================= */
+let timerInterval;
 
-/* ===== ЗВУК ===== */
-let AC = null;
-function initAudio(){
-  if (AC) return;
-  try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){ AC = null; }
-}
-function tone(freq, dur, type, vol, delay){
-  if (!AC) return;
-  const t0 = AC.currentTime + (delay || 0);
-  const osc = AC.createOscillator(), gain = AC.createGain();
-  osc.type = type || 'sine';
-  osc.frequency.setValueAtTime(freq, t0);
-  gain.gain.setValueAtTime(0, t0);
-  gain.gain.linearRampToValueAtTime(vol || 0.07, t0 + 0.015);
-  gain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
-  osc.connect(gain); gain.connect(AC.destination);
-  osc.start(t0); osc.stop(t0 + dur + 0.05);
-}
-const sfxClick = () => tone(520, 0.06, 'sine', 0.04);
-const sfxCorrect = () => { tone(660,0.09,'square',0.05); tone(880,0.13,'square',0.05,0.08); };
-const sfxWrong = () => { tone(220,0.16,'sawtooth',0.06); tone(160,0.22,'sawtooth',0.06,0.13); };
-const sfxWin = () => [523,659,784,1047].forEach((f,i) => tone(f,0.16,'triangle',0.06,i*0.11));
-const sfxLose = () => [420,340,260,190].forEach((f,i) => tone(f,0.2,'sawtooth',0.05,i*0.14));
-
-/* ===== ЭФФЕКТЫ ===== */
-function confetti(n){
-  const colors = ['#6c8cff','#a06bff','#2dd4a7','#ffc94d','#ff5c6c','#4df0ff'];
-  for (let i = 0; i < (n || 30); i++){
-    const el = document.createElement('div');
-    el.className = 'confetti';
-    el.style.left = Math.random() * 100 + 'vw';
-    el.style.background = colors[Math.floor(Math.random() * colors.length)];
-    el.style.animationDelay = (Math.random() * 0.3) + 's';
-    el.style.animationDuration = (0.9 + Math.random() * 0.9) + 's';
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 2300);
-  }
-}
-function floatPoints(text){
-  const el = document.createElement('div');
-  el.className = 'float-pts';
-  el.textContent = text;
-  el.style.left = (35 + Math.random() * 30) + '%';
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 1250);
+function startShuffleTimer() {
+    clearInterval(timerInterval);
+    state.timeLeft = 480;
+    updateTimerDisplay();
+    
+    timerInterval = setInterval(() => {
+        if (state.locked || elements.game.style.display === 'none' || elements.modal.classList.contains('active')) return;
+        
+        state.timeLeft--;
+        updateTimerDisplay();
+        
+        if (state.timeLeft <= 0) {
+            shuffleAnswers();
+            state.timeLeft = 480;
+        }
+    }, 1000);
 }
 
-/* ===== НАВИГАЦИЯ ===== */
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo({top:0, behavior:'smooth'});
+function updateTimerDisplay() {
+    const m = Math.floor(state.timeLeft / 60);
+    const s = state.timeLeft % 60;
+    elements.timerDisplay.textContent = `${m}:${s.toString().padStart(2, '0')}`;
+    elements.timerDisplay.style.color = state.timeLeft < 60 ? '#e52521' : '#ff8c00';
 }
 
-/* ===== СТАРТ ===== */
-function startGame(variant){
-  initAudio(); sfxClick();
-  state.variant = variant;
-  state.qIndex = 0; state.score = 0; state.lives = 3;
-  state.streak = 0; state.bestStreak = 0; state.locked = false;
-  state.results = []; state.fastAnswers = 0;
-  const t = THEMES[variant];
-  document.body.setAttribute('data-theme', t.theme);
-  document.getElementById('variantBadge').textContent = t.emoji + ' ' + t.name;
-  showScreen('gameScreen');
-  renderQuestion();
+function shuffleAnswers() {
+    const blocks = Array.from(elements.blockRow.children);
+    if (blocks.length === 0) return;
+    
+    for (let i = blocks.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [blocks[i], blocks[j]] = [blocks[j], blocks[i]];
+    }
+    
+    elements.blockRow.innerHTML = '';
+    blocks.forEach(block => elements.blockRow.appendChild(block));
+    
+    playSound('shuffle');
+    elements.blockRow.classList.add('shake');
+    setTimeout(() => elements.blockRow.classList.remove('shake'), 500);
+    
+    const originalText = elements.question.innerHTML;
+    elements.question.innerHTML = `<span style="color:#e52521; font-weight:bold; display:block; margin-bottom:10px;">⏳ ВРЕМЯ ВЫШЛО! ОТВЕТЫ ПЕРЕМЕШАНЫ.</span>${originalText}`;
 }
 
-/* ===== РЕНДЕР ===== */
-function renderQuestion(){
-  const q = QUESTIONS[state.variant][state.qIndex];
-  state.locked = false;
-  const card = document.getElementById('qCard');
-  card.className = 'q-card';
-  document.getElementById('qTopic').textContent = q.topic;
-  document.getElementById('qText').textContent = q.q;
-  const fb = document.getElementById('qFeedback');
-  fb.className = 'q-feedback'; fb.textContent = '';
-  const body = document.getElementById('qBody');
-  body.innerHTML = '';
+/* =========================================================
+   ИГРОВОЙ ЦИКЛ (ФИЗИКА)
+   ========================================================= */
+function gameLoop() {
+    if (elements.game.style.display === 'none') { requestAnimationFrame(gameLoop); return; }
 
-  if (q.type === 'choice'){
-    const wrap = document.createElement('div');
-    wrap.className = 'options';
-    q.opts.forEach((opt, i) => {
-      const b = document.createElement('button');
-      b.className = 'opt';
-      b.textContent = opt;
-      b.dataset.index = i;
-      b.onclick = () => answerChoice(i, b);
-      wrap.appendChild(b);
-    });
-    body.appendChild(wrap);
-  } else {
-    const row = document.createElement('div');
-    row.className = 'input-row';
-    const inp = document.createElement('input');
-    inp.className = 'game-input';
-    inp.placeholder = 'Введи ответ…';
-    inp.autocomplete = 'off';
-    inp.addEventListener('keydown', e => { if (e.key === 'Enter') answerInput(inp); });
-    const btn = document.createElement('button');
-    btn.className = 'btn primary';
-    btn.textContent = 'Ответить';
-    btn.onclick = () => answerInput(inp);
-    row.appendChild(inp); row.appendChild(btn);
-    body.appendChild(row);
-    setTimeout(() => inp.focus(), 120);
-  }
-  updateHUD();
-  startTimer();
+    if (state.targetX !== null) {
+        if (Math.abs(state.marioX - state.targetX) <= SPEED) {
+            state.marioX = state.targetX; state.targetX = null; jump();
+        } else if (state.marioX < state.targetX) { state.marioX += SPEED; } else { state.marioX -= SPEED; }
+    }
+
+    if (state.isJumping) {
+        state.marioY += state.marioVY;
+        state.marioVY -= GRAVITY;
+
+        if (state.marioY <= 0) { state.marioY = 0; state.marioVY = 0; state.isJumping = false; }
+
+        if (state.marioVY > 0 && state.marioY >= BLOCK_Y - 10 && state.marioY <= BLOCK_Y + 40) {
+            const blocks = document.querySelectorAll('.q-block');
+            for (let i = 0; i < blocks.length; i++) {
+                const bx = blocks[i].offsetLeft; const bw = blocks[i].offsetWidth;
+                if (state.marioX + 40 > bx && state.marioX < bx + bw) {
+                    state.marioY = BLOCK_Y; state.marioVY = 0; state.isJumping = false;
+                    triggerAnswer(i); break;
+                }
+            }
+        }
+    }
+    elements.mario.style.left = state.marioX + 'px';
+    elements.mario.style.bottom = state.marioY + 'px';
+    requestAnimationFrame(gameLoop);
 }
+requestAnimationFrame(gameLoop);
 
-function startTimer(){
-  clearInterval(state.timerId);
-  state.timeLeft = TIME_PER_Q;
-  updateTimerBar();
-  state.timerId = setInterval(() => {
-    state.timeLeft -= 0.1;
-    if (state.timeLeft <= 0){
-      state.timeLeft = 0; updateTimerBar();
-      clearInterval(state.timerId);
-      if (!state.locked) handleWrong('⏱ Время вышло!');
-    } else updateTimerBar();
-  }, 100);
-}
-
-function updateTimerBar(){
-  const pct = Math.max(0, state.timeLeft / TIME_PER_Q * 100);
-  const bar = document.getElementById('timerFill');
-  bar.style.width = pct + '%';
-  bar.classList.toggle('low', pct < 30);
-}
-
-/* ===== ОТВЕТЫ ===== */
-function norm(v){
-  return String(v).toLowerCase().replace(/\s+/g,'').replace(/ё/g,'е');
-}
-function matchAnswer(user, correct){
-  const nu = norm(user), nc = norm(correct);
-  if (nu === nc) return true;
-  return nu.replace(/[\\/]/g,'/') === nc.replace(/[\\/]/g,'/');
-}
-
-function answerChoice(index, btn){
-  if (state.locked) return;
-  const q = QUESTIONS[state.variant][state.qIndex];
-  if (index === q.a){ btn.classList.add('correct'); handleCorrect(); }
-  else { btn.classList.add('wrong'); handleWrong('❌ Неверно!'); }
-}
-
-function answerInput(inp){
-  if (state.locked) return;
-  const q = QUESTIONS[state.variant][state.qIndex];
-  const val = inp.value.trim();
-  if (!val){ inp.focus(); return; }
-  inp.disabled = true;
-  if (matchAnswer(val, q.a)) handleCorrect();
-  else handleWrong('❌ Неверно!');
-}
-
-/* ===== РЕЗУЛЬТАТ ===== */
-function handleCorrect(){
-  state.locked = true;
-  clearInterval(state.timerId);
-  state.streak++;
-  state.bestStreak = Math.max(state.bestStreak, state.streak);
-  if (state.timeLeft > 25) state.fastAnswers++;
-  const base = 100;
-  const streakBonus = Math.min(state.streak - 1, 5) * 25;
-  const timeBonus = Math.round(state.timeLeft * 2);
-  const gain = base + streakBonus + timeBonus;
-  state.score += gain;
-  state.results.push({q: state.qIndex, ok: true});
-  sfxCorrect(); confetti(22); floatPoints('+' + gain);
-  document.getElementById('qCard').classList.add('flash-good');
-  const fb = document.getElementById('qFeedback');
-  fb.className = 'q-feedback show ok';
-  fb.textContent = state.streak > 1
-    ? '🔥 Серия ×' + state.streak + '! +' + gain + ' очков'
-    : '✅ Верно! +' + gain + ' очков';
-  updateHUD();
-  setTimeout(nextQuestion, 1100);
-}
-
-function handleWrong(msg){
-  state.locked = true;
-  clearInterval(state.timerId);
-  state.streak = 0;
-  state.lives--;
-  state.results.push({q: state.qIndex, ok: false});
-  sfxWrong();
-  const card = document.getElementById('qCard');
-  card.classList.add('shake','flash-bad');
-  setTimeout(() => card.classList.remove('shake'), 400);
-  const fb = document.getElementById('qFeedback');
-  fb.className = 'q-feedback show bad';
-  fb.textContent = msg + '  −1 жизнь';
-  updateHUD();
-  if (state.lives <= 0) setTimeout(() => endGame(false), 1200);
-  else setTimeout(nextQuestion, 1200);
-}
-
-function nextQuestion(){
-  state.qIndex++;
-  if (state.qIndex >= TOTAL_Q){ endGame(true); return; }
-  renderQuestion();
-}
-
-function updateHUD(){
-  document.getElementById('hudScore').textContent = state.score;
-  document.getElementById('hudLives').textContent =
-    '❤️'.repeat(Math.max(0,state.lives)) + '🖤'.repeat(Math.max(0,3-state.lives));
-  document.getElementById('hudStreak').textContent = state.streak;
-  document.getElementById('hudProgress').textContent = (state.qIndex + 1) + '/' + TOTAL_Q;
-}
-
-/* ===== КОНЕЦ ===== */
-function endGame(win){
-  clearInterval(state.timerId);
-  const correct = state.results.filter(r => r.ok).length;
-  const accuracy = Math.round(correct / TOTAL_Q * 100);
-  let rank, emoji;
-  if (state.score >= 3400){ rank = 'Мастер ОГЭ'; emoji = '👑'; }
-  else if (state.score >= 2200){ rank = 'Знаток'; emoji = '🏆'; }
-  else if (state.score >= 1200){ rank = 'Уверенный'; emoji = '🎯'; }
-  else { rank = 'Новичок'; emoji = '🌱'; }
-
-  const badges = [];
-  if (state.bestStreak >= 5) badges.push('🔥 Серия ' + state.bestStreak);
-  if (state.lives === 3) badges.push('💎 Без потерь');
-  if (accuracy === 100) badges.push('🧠 Идеально');
-  if (state.fastAnswers >= 5) badges.push('⚡ Скорость');
-  if (win) badges.push('🏁 Финишёр');
-
-  const qs = QUESTIONS[state.variant];
-  let review = '';
-  qs.forEach((q, i) => {
-    const r = state.results.find(x => x.q === i);
-    const status = !r ? '⬜' : (r.ok ? '✅' : '❌');
-    const cls = !r ? '' : (r.ok ? 'ok' : 'bad');
-    const ans = q.type === 'choice' ? q.opts[q.a] : q.a;
-    review +=
-      '<div class="review-item ' + cls + '">' +
-        '<div class="ri-head"><span>' + status + '</span>' +
-          '<span class="ri-num">Задание ' + (i+1) + '</span>' +
-          '<span>' + q.topic + '</span></div>' +
-        '<div class="ri-q">' + escapeHtml(q.q) + '</div>' +
-        '<div class="ri-a">Правильный ответ: <b>' + escapeHtml(ans) + '</b></div>' +
-        '<div class="ri-sol">' + escapeHtml(q.sol) + '</div>' +
-      '</div>';
-  });
-
-  const screen = document.getElementById('resultScreen');
-  screen.innerHTML =
-    '<div class="result-hero">' +
-      '<span class="result-emoji">' + emoji + '</span>' +
-      '<h2 class="result-rank">' + rank + '</h2>' +
-      '<div class="result-score">' + state.score + '</div>' +
-      '<div style="color:var(--muted);font-size:14px">' + (win ? 'Мир пройден!' : 'Жизни закончились') + '</div>' +
-    '</div>' +
-    '<div class="stat-grid">' +
-      '<div class="stat"><span class="stat-v">' + correct + '/' + TOTAL_Q + '</span><span class="stat-l">Верно</span></div>' +
-      '<div class="stat"><span class="stat-v">' + accuracy + '%</span><span class="stat-l">Точность</span></div>' +
-      '<div class="stat"><span class="stat-v">' + state.bestStreak + '</span><span class="stat-l">Серия</span></div>' +
-    '</div>' +
-    (badges.length ? '<div class="badges">' + badges.map(b => '<span class="badge">' + b + '</span>').join('') + '</div>' : '') +
-    '<div class="result-actions">' +
-      '<button class="btn primary" id="btnAgain">Играть снова</button>' +
-      '<button class="btn ghost" id="btnMenu">Другой мир</button>' +
-    '</div>' +
-    '<h3 class="review-title">Разбор всех 16 заданий</h3>' + review;
-
-  showScreen('resultScreen');
-  document.getElementById('btnAgain').onclick = () => startGame(state.variant);
-  document.getElementById('btnMenu').onclick = () => { sfxClick(); showScreen('startScreen'); };
-
-  if (win){ sfxWin(); confetti(90); } else sfxLose();
-}
-
-function escapeHtml(s){
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-/* ===== ИНИЦИАЛИЗАЦИЯ ===== */
-document.querySelectorAll('.theme-card').forEach(card => {
-  card.addEventListener('click', () => startGame(Number(card.dataset.v)));
+/* =========================================================
+   УПРАВЛЕНИЕ
+   ========================================================= */
+document.addEventListener('keydown', (e) => {
+    if (state.locked || elements.game.style.display === 'none') return;
+    if (e.key === 'ArrowLeft') { state.targetX = null; state.marioX = Math.max(0, state.marioX - SPEED); elements.mario.style.transform = "scaleX(-1)"; }
+    else if (e.key === 'ArrowRight') { state.targetX = null; state.marioX = Math.min(elements.playArea.offsetWidth - 50, state.marioX + SPEED); elements.mario.style.transform = "scaleX(1)"; }
+    else if (e.key === 'ArrowUp' || e.key === ' ') { e.preventDefault(); jump(); }
 });
+
+function jump() { if (!state.isJumping && !state.locked) { state.isJumping = true; state.marioVY = JUMP_POWER; } }
+function moveToBlock(index) { if (state.locked) return; const block = document.querySelectorAll('.q-block')[index]; state.targetX = block.offsetLeft + (block.offsetWidth / 2) - 25; elements.mario.style.transform = "scaleX(1)"; }
+
+/* =========================================================
+   ИГРОВАЯ ЛОГИКА
+   ========================================================= */
+function startGame(levelIdx) {
+    initAudio(); 
+    initPenaltyPool(); // Инициализируем/перемешиваем колоду штрафов при старте
+    
+    state.levelIdx = levelIdx; state.qIdx = 0; state.score = 0; state.lives = 3; state.isPenalty = false;
+    document.body.className = LEVELS[levelIdx].theme;
+    elements.menu.style.display = 'none'; elements.game.style.display = 'flex'; elements.level.textContent = levelIdx + 1;
+    loadQuestion();
+}
+
+function updateHUD() {
+    elements.score.textContent = state.score; elements.progress.textContent = (state.qIdx + 1) + '/16';
+    elements.lives.textContent = '❤️'.repeat(state.lives) + '🖤'.repeat(3 - state.lives);
+}
+
+function loadQuestion() {
+    if (state.qIdx >= 16) { endGame(true); return; }
+    state.locked = false; state.marioX = 50; state.marioY = 0; state.marioVY = 0; state.isJumping = false; state.targetX = null;
+    
+    // Если это штраф, берем задание из state.currentPenaltyTask, иначе из текущего уровня
+    const qData = state.isPenalty ? state.currentPenaltyTask : LEVELS[state.levelIdx].questions[state.qIdx];
+    
+    elements.question.textContent = (state.isPenalty ? "[ШТРАФ] " : "") + qData.q;
+    elements.blockRow.innerHTML = '';
+    
+    const opts = qData.opts.map((text, i) => ({ text, isCorrect: i === qData.a }));
+    opts.sort(() => Math.random() - 0.5);
+
+    opts.forEach((opt, i) => {
+        const block = document.createElement('div');
+        block.className = 'q-block';
+        if (state.isPenalty) block.style.background = '#ff8c00';
+        block.innerHTML = `<span>${opt.text}</span>`;
+        block.onclick = () => moveToBlock(i);
+        block.dataset.correct = opt.isCorrect;
+        elements.blockRow.appendChild(block);
+    });
+    
+    updateHUD();
+    startShuffleTimer();
+}
+
+function triggerAnswer(index) {
+    if (state.locked) return;
+    state.locked = true;
+    clearInterval(timerInterval);
+
+    const block = document.querySelectorAll('.q-block')[index];
+    const isCorrect = block.dataset.correct === 'true';
+    
+    block.style.transform = "translateY(-10px)";
+    setTimeout(() => block.style.transform = "translateY(0)", 150);
+
+    if (isCorrect) {
+        playSound('coin'); block.style.background = '#43b047'; block.innerHTML = '🪙';
+        state.score += 100 + (state.isPenalty ? 0 : 20);
+        setTimeout(() => showReward(), 600);
+    } else {
+        playSound('bump'); block.style.background = '#555'; block.innerHTML = '💀';
+        document.querySelectorAll('.q-block').forEach(b => { if (b.dataset.correct === 'true') b.style.background = '#43b047'; });
+        setTimeout(() => handlePenalty(), 800);
+    }
+}
+
+/* =========================================================
+   БОНУСЫ И ШТРАФЫ
+   ========================================================= */
+const relaxBonuses = [
+    { title: "ПЕРЕЗАГРУЗКА", emoji: "🐈", text: "Закрой глаза на 5 секунд. Представь, что гладишь котика. Сделай глубокий вдох и выдох." },
+    { title: "ПЕРЕРЫВ", emoji: "☕", text: "Сделай глоток воды. Разомни шею и плечи. Ты отлично справляешься!" },
+    { title: "МЕДИТАЦИЯ", emoji: "🧘", text: "Вдох на 4 счета, задержка на 4, выдох на 4. Повтори 3 раза." }
+];
+
+function showReward() {
+    elements.mMedia.innerHTML = '';
+    elements.mMedia.classList.remove('active');
+
+    if (state.isPenalty) {
+        state.isPenalty = false;
+        elements.modal.classList.add('active');
+        elements.mTitle.textContent = "ИСПЫТАНИЕ ПРОЙДЕНО!";
+        elements.mTitle.style.color = "#43b047";
+        elements.mEmoji.textContent = "🏆";
+        elements.mEmoji.style.display = "block";
+        elements.mText.innerHTML = "Ты справился со штрафным заданием и сохранил прогресс!";
+        elements.mBtn.onclick = () => { elements.modal.classList.remove('active'); state.qIdx++; loadQuestion(); };
+        return;
+    }
+
+    const roll = Math.random();
+    elements.modal.classList.add('active');
+    elements.mTitle.style.color = "#43b047";
+
+    if (roll < 0.40) {
+        const relax = relaxBonuses[Math.floor(Math.random() * relaxBonuses.length)];
+        elements.mTitle.textContent = "ОТЛИЧНО!";
+        elements.mEmoji.textContent = relax.emoji;
+        elements.mEmoji.style.display = "block";
+        elements.mText.innerHTML = `<b>${relax.title}</b><br><br>${relax.text}`;
+    } 
+    else if (roll < 0.60) {
+        elements.mTitle.textContent = "ПОБЕДА!";
+        elements.mEmoji.textContent = "🪙";
+        elements.mEmoji.style.display = "block";
+        elements.mText.innerHTML = "Ты получаешь бонусные монеты!<br>+20 очков.";
+        state.score += 20;
+        updateHUD();
+    } 
+    else {
+        const media = MEDIA_REWARDS[Math.floor(Math.random() * MEDIA_REWARDS.length)];
+        elements.mTitle.textContent = media.title;
+        elements.mEmoji.style.display = "none";
+        elements.mText.innerHTML = media.text;
+        elements.mMedia.classList.add('active');
+
+        if (media.type === 'video') {
+            elements.mMedia.innerHTML = `<iframe src="${media.url}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+        } else if (media.type === 'link') {
+            elements.mMedia.innerHTML = `<a href="${media.url}" target="_blank" class="media-link-btn">${media.btnText || 'Открыть ссылку'}</a>`;
+        }
+    }
+
+    elements.mBtn.onclick = () => {
+        elements.modal.classList.remove('active');
+        elements.mMedia.innerHTML = '';
+        state.qIdx++;
+        loadQuestion();
+    };
+}
+
+function handlePenalty() {
+    if (state.isPenalty) { 
+        // Если провалили ШТРАФНОЕ задание — игра окончена
+        gameOver(); 
+        return; 
+    }
+    
+    const roll = Math.random();
+    if (roll < 0.20) { 
+        gameOver(); 
+    } 
+    else {
+        // 80% шанс: достаем УНИКАЛЬНОЕ штрафное задание
+        state.currentPenaltyTask = getNextPenaltyQuestion();
+        
+        elements.modal.classList.add('active');
+        elements.mTitle.textContent = "ШТРАФНОЕ ЗАДАНИЕ!";
+        elements.mTitle.style.color = "#ff8c00";
+        elements.mEmoji.textContent = "⚠️";
+        elements.mEmoji.style.display = "block";
+        elements.mText.innerHTML = "Марио дает тебе второй шанс.<br>Реши дополнительное задание!";
+        
+        elements.mBtn.onclick = () => {
+            elements.modal.classList.remove('active'); 
+            state.isPenalty = true; 
+            state.lives--; 
+            updateHUD();
+            if (state.lives <= 0) { gameOver(); return; }
+            loadQuestion();
+        };
+    }
+}
+
+function gameOver() {
+    clearInterval(timerInterval);
+    playSound('die');
+    elements.mario.textContent = "👻";
+    elements.mario.style.transform = "translateY(-50px) rotate(180deg)";
+    elements.modal.classList.add('active');
+    elements.mTitle.textContent = "GAME OVER";
+    elements.mTitle.style.color = "#e52521";
+    elements.mEmoji.textContent = "💀";
+    elements.mEmoji.style.display = "block";
+    elements.mText.innerHTML = "Марио проиграл!<br>Твой прогресс сброшен. Придется начать уровень заново.";
+    elements.mBtn.textContent = "В главное меню";
+    elements.mBtn.onclick = () => {
+        elements.modal.classList.remove('active');
+        elements.mario.textContent = "👨‍🔧";
+        elements.mario.style.transform = "translateY(0) rotate(0deg)";
+        elements.game.style.display = 'none'; elements.menu.style.display = 'block';
+    };
+}
+
+function endGame(win) {
+    clearInterval(timerInterval);
+    if (win) {
+        playSound('powerup');
+        elements.modal.classList.add('active');
+        elements.mTitle.textContent = "УРОВЕНЬ ПРОЙДЕН!";
+        elements.mTitle.style.color = "#ffd700";
+        elements.mEmoji.textContent = "👑";
+        elements.mEmoji.style.display = "block";
+        elements.mText.innerHTML = `Ты прошел мир «${LEVELS[state.levelIdx].name}»!<br>Счет: <b>${state.score}</b> монет.`;
+        elements.mBtn.textContent = "В главное меню";
+        elements.mBtn.onclick = () => {
+            elements.modal.classList.remove('active');
+            elements.game.style.display = 'none'; elements.menu.style.display = 'block';
+        };
+    }
+}
 </script>
 <a href="index.html" class="button-link">📚 Вернуться к основному тренажёру</a>
 </body>
